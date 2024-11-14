@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     const form = document.getElementById('settingsForm');
     const resetButton = document.getElementById('resetButton');
     const addPrefixButton = document.getElementById('addPrefix');
@@ -6,22 +6,29 @@ document.addEventListener('DOMContentLoaded', function() {
     const defaultPrefixSelect = document.getElementById('defaultPrefix');
     const addSwaggerButton = document.getElementById('addSwagger');
 
-    // Load current settings
-    chrome.storage.local.get(['userConfig'], function(data) {
-        const currentConfig = data.userConfig || DEFAULT_CONFIG;
+    // Load current settings using the config promise
+    try {
+        const CONFIG = await getConfig();
         
-        document.getElementById('baseUrl').value = currentConfig.baseUrl;
-        document.getElementById('maxHistory').value = currentConfig.maxHistoryItems;
-        document.getElementById('title').value = currentConfig.title;
-        document.getElementById('placeholder').value = currentConfig.placeholderText;
+        // Load current user settings
+        chrome.storage.local.get(['userConfig'], function(data) {
+            const currentConfig = data.userConfig || CONFIG;
+            
+            document.getElementById('baseUrl').value = currentConfig.baseUrl;
+            document.getElementById('maxHistory').value = currentConfig.maxHistoryItems;
+            document.getElementById('title').value = currentConfig.title;
+            document.getElementById('placeholder').value = currentConfig.placeholderText;
 
-        // Load prefixes
-        updatePrefixList(currentConfig.prefixes || DEFAULT_CONFIG.prefixes);
-        updateDefaultPrefixSelect(currentConfig.prefixes || DEFAULT_CONFIG.prefixes, currentConfig.defaultPrefix);
+            // Load prefixes
+            updatePrefixList(currentConfig.prefixes || CONFIG.prefixes);
+            updateDefaultPrefixSelect(currentConfig.prefixes || CONFIG.prefixes, currentConfig.defaultPrefix);
 
-        // Load Swagger links
-        updateSwaggerList(currentConfig.swaggerLinks || DEFAULT_CONFIG.swaggerLinks);
-    });
+            // Load Swagger links
+            updateSwaggerList(currentConfig.swaggerLinks || CONFIG.swaggerLinks);
+        });
+    } catch (error) {
+        console.error('Error loading config:', error);
+    }
 
     // Add new prefix
     addPrefixButton.addEventListener('click', function() {

@@ -6,7 +6,17 @@ const DEFAULT_CONFIG = {
   title: 'Task Helper',
   defaultErrorMessage: 'Please enter a valid ticket number',
   prefixes: ['MS-', 'AP-', 'FE-'],
-  defaultPrefix: 'MS-'
+  defaultPrefix: 'MS-',
+  swaggerLinks: [
+    {
+      name: 'User Service API',
+      url: 'https://api.example.com/user-service/swagger-ui.html'
+    },
+    {
+      name: 'Order Service API',
+      url: 'https://api.example.com/order-service/swagger-ui.html'
+    }
+  ]
 };
 
 // Create a promise to handle config loading

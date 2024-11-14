@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const addPrefixButton = document.getElementById('addPrefix');
     const prefixList = document.getElementById('prefixList');
     const defaultPrefixSelect = document.getElementById('defaultPrefix');
+    const addSwaggerButton = document.getElementById('addSwagger');
 
     // Load current settings
     chrome.storage.local.get(['userConfig'], function(data) {
@@ -17,6 +18,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Load prefixes
         updatePrefixList(currentConfig.prefixes || DEFAULT_CONFIG.prefixes);
         updateDefaultPrefixSelect(currentConfig.prefixes || DEFAULT_CONFIG.prefixes, currentConfig.defaultPrefix);
+
+        // Load Swagger links
+        updateSwaggerList(currentConfig.swaggerLinks || DEFAULT_CONFIG.swaggerLinks);
     });
 
     // Add new prefix
@@ -28,6 +32,18 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!currentPrefixes.includes(formattedPrefix)) {
                 updatePrefixList([...currentPrefixes, formattedPrefix]);
                 updateDefaultPrefixSelect([...currentPrefixes, formattedPrefix]);
+            }
+        }
+    });
+
+    // Add new Swagger link
+    addSwaggerButton.addEventListener('click', function() {
+        const name = prompt('Enter name for the Swagger link:');
+        if (name) {
+            const url = prompt('Enter URL for the Swagger link:');
+            if (url) {
+                const currentLinks = getSwaggerLinksFromList();
+                updateSwaggerList([...currentLinks, { name, url }]);
             }
         }
     });
@@ -67,6 +83,38 @@ document.addEventListener('DOMContentLoaded', function() {
         return Array.from(prefixList.querySelectorAll('.prefix-item span')).map(span => span.textContent);
     }
 
+    function updateSwaggerList(links) {
+        const swaggerList = document.getElementById('swaggerList');
+        swaggerList.innerHTML = links.map(link => `
+            <div class="swagger-item">
+                <span>${link.name}</span>
+                <input type="text" value="${link.url}" readonly>
+                <button type="button" class="remove-swagger" data-name="${link.name}">
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </button>
+            </div>
+        `).join('');
+
+        // Add remove handlers
+        document.querySelectorAll('.remove-swagger').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const nameToRemove = this.dataset.name;
+                const updatedLinks = links.filter(l => l.name !== nameToRemove);
+                updateSwaggerList(updatedLinks);
+            });
+        });
+    }
+
+    function getSwaggerLinksFromList() {
+        return Array.from(document.querySelectorAll('.swagger-item')).map(item => ({
+            name: item.querySelector('span').textContent,
+            url: item.querySelector('input').value
+        }));
+    }
+
     // Save settings
     form.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -80,7 +128,8 @@ document.addEventListener('DOMContentLoaded', function() {
             placeholderText: document.getElementById('placeholder').value,
             defaultErrorMessage: 'Please enter a valid ticket number',
             prefixes: prefixes,
-            defaultPrefix: defaultPrefixSelect.value
+            defaultPrefix: defaultPrefixSelect.value,
+            swaggerLinks: getSwaggerLinksFromList()
         };
 
         chrome.storage.local.set({ userConfig: newConfig }, function() {

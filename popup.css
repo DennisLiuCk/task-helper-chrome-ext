@@ -152,4 +152,80 @@ h2 {
 .settings-button svg {
   width: 16px;
   height: 16px;
+}
+
+.tab-container {
+    display: flex;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 15px;
+}
+
+.tab-button {
+    padding: 8px 16px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #666;
+    border-bottom: 2px solid transparent;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tab-icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.7;
+}
+
+.tab-button:hover {
+    color: #333;
+}
+
+.tab-button:hover .tab-icon {
+    opacity: 0.9;
+}
+
+.tab-button.active {
+    color: #4CAF50;
+    border-bottom-color: #4CAF50;
+}
+
+.tab-button.active .tab-icon {
+    opacity: 1;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.swagger-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.swagger-item {
+    padding: 8px 12px;
+    background: #f5f5f5;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.swagger-item:hover {
+    background: #e0e0e0;
+}
+
+.swagger-item svg {
+    width: 16px;
+    height: 16px;
+    color: #666;
 } 

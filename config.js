@@ -5,7 +5,7 @@ const DEFAULT_CONFIG = {
   placeholderText: 'Enter ticket number',
   title: 'Task Helper',
   defaultErrorMessage: 'Please enter a valid ticket number',
-  prefixes: ['MS-', 'AP-', 'FE-'],
+  prefixes: ['MS-', 'BUILD-'], // add more prefixes as needed
   defaultPrefix: 'MS-',
   swaggerLinks: [
     {

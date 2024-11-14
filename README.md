@@ -10,6 +10,10 @@ A Chrome extension to help you quickly navigate to Jira tickets.
 - Add and manage ticket prefixes.
 - Reset settings to default values.
 
+## Demo
+
+![Task Helper Extension](screenshot/s1.png)
+
 ## Installation
 
 1. Clone the repository:

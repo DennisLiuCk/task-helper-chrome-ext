@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 	const clearButton = document.getElementById('clearHistory');
 	const settingsButton = document.getElementById('settingsButton');
 	const titleElement = document.getElementById('title');
+	const addReleaseGroupButton = document.getElementById('addReleaseGroup');
 
 	try {
 		// Wait for config to load
@@ -179,6 +180,160 @@ document.addEventListener('DOMContentLoaded', async function() {
 					content.classList.remove('active'));
 				document.getElementById(`${tabId}Tab`).classList.add('active');
 			});
+		});
+
+		// Add new function to handle release groups
+		function updateReleaseGroupsDisplay(releaseGroups) {
+			const releaseGroupsContainer = document.getElementById('releaseGroups');
+			
+			if (!releaseGroups || Object.keys(releaseGroups).length === 0) {
+				releaseGroupsContainer.innerHTML = '<div class="no-history">No release groups</div>';
+				return;
+			}
+
+			releaseGroupsContainer.innerHTML = Object.entries(releaseGroups)
+				.map(([date, items]) => `
+					<div class="release-group" data-date="${date}">
+						<div class="release-group-header">
+							<span class="release-title">${date}</span>
+							<div class="release-actions">
+								<button class="release-action-button add-to-group" title="Add task">
+									<svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+										<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+									</svg>
+								</button>
+								<button class="release-action-button delete-group" title="Delete group">
+									<svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+										<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+									</svg>
+								</button>
+							</div>
+						</div>
+						<div class="release-items">
+							${items.map(id => `
+								<div class="release-item" data-id="${id}">
+									<span>${id}</span>
+									<button class="release-action-button remove-from-group" title="Remove from group">
+										<svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+											<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+										</svg>
+									</button>
+								</div>
+							`).join('')}
+						</div>
+					</div>
+				`).join('');
+
+			// Add event listeners for release group actions
+			addReleaseGroupEventListeners();
+		}
+
+		function addReleaseGroupEventListeners() {
+			// Delete group
+			document.querySelectorAll('.delete-group').forEach(button => {
+				button.addEventListener('click', function(e) {
+					const group = e.target.closest('.release-group');
+					const date = group.dataset.date;
+					
+					if (confirm(`Delete release group ${date}?`)) {
+						chrome.storage.local.get(['releaseGroups'], function(data) {
+							const groups = data.releaseGroups || {};
+							delete groups[date];
+							chrome.storage.local.set({ releaseGroups: groups }, function() {
+								updateReleaseGroupsDisplay(groups);
+							});
+						});
+					}
+				});
+			});
+
+			// Add task to group
+			document.querySelectorAll('.add-to-group').forEach(button => {
+				button.addEventListener('click', async function(e) {
+					const group = e.target.closest('.release-group');
+					const date = group.dataset.date;
+					
+					chrome.storage.local.get(['history'], function(data) {
+						const history = data.history || [];
+						if (history.length === 0) {
+							alert('No recent tasks available to add');
+							return;
+						}
+
+						const taskId = prompt('Enter task ID or select from recent:\n\n' + history.join('\n'));
+						if (!taskId) return;
+
+						chrome.storage.local.get(['releaseGroups'], function(data) {
+							const groups = data.releaseGroups || {};
+							groups[date] = groups[date] || [];
+							if (!groups[date].includes(taskId)) {
+								groups[date].push(taskId);
+								chrome.storage.local.set({ releaseGroups: groups }, function() {
+									updateReleaseGroupsDisplay(groups);
+								});
+							}
+						});
+					});
+				});
+			});
+
+			// Remove task from group
+			document.querySelectorAll('.remove-from-group').forEach(button => {
+				button.addEventListener('click', function(e) {
+					const group = e.target.closest('.release-group');
+					const item = e.target.closest('.release-item');
+					const date = group.dataset.date;
+					const taskId = item.dataset.id;
+
+					chrome.storage.local.get(['releaseGroups'], function(data) {
+						const groups = data.releaseGroups || {};
+						groups[date] = groups[date].filter(id => id !== taskId);
+						if (groups[date].length === 0) {
+							delete groups[date];
+						}
+						chrome.storage.local.set({ releaseGroups: groups }, function() {
+							updateReleaseGroupsDisplay(groups);
+						});
+					});
+				});
+			});
+
+			// Click handler for release items
+			document.querySelectorAll('.release-item').forEach(item => {
+				item.addEventListener('click', async function(e) {
+					if (e.target.closest('.remove-from-group')) return;
+					
+					const taskId = this.dataset.id;
+					const currentConfig = await getConfig();
+					const jiraUrl = `${currentConfig.baseUrl}${taskId}`;
+					
+					chrome.tabs.create({ url: jiraUrl });
+				});
+			});
+		}
+
+		// Add release group button handler
+		addReleaseGroupButton.addEventListener('click', function() {
+			const date = prompt('Enter release date (e.g., 20240118):');
+			if (!date) return;
+
+			chrome.storage.local.get(['releaseGroups'], function(data) {
+				const groups = data.releaseGroups || {};
+				if (groups[date]) {
+					alert('Release group already exists');
+					return;
+				}
+
+				groups[date] = [];
+				chrome.storage.local.set({ releaseGroups: groups }, function() {
+					updateReleaseGroupsDisplay(groups);
+				});
+			});
+		});
+
+		// Load release groups when popup opens
+		chrome.storage.local.get(['releaseGroups'], function(data) {
+			updateReleaseGroupsDisplay(data.releaseGroups || {});
 		});
 
 	} catch (error) {

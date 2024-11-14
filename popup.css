@@ -235,4 +235,85 @@ h2 {
     height: 16px;
     color: #666;
 }
+
+.release-section {
+    margin-top: 15px;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+}
+
+.release-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.release-group {
+    margin-bottom: 15px;
+    background: #f8f8f8;
+    border-radius: 4px;
+    padding: 8px;
+}
+
+.release-group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 8px;
+}
+
+.release-title {
+    font-weight: 500;
+    color: #333;
+}
+
+.release-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.release-action-button {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    color: #666;
+    border-radius: 4px;
+}
+
+.release-action-button:hover {
+    background-color: #eee;
+}
+
+.release-items {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.release-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 8px;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.release-item:hover {
+    background: #f0f0f0;
+}
+
+.remove-from-group {
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.release-item:hover .remove-from-group {
+    opacity: 1;
+}
  

@@ -2,6 +2,7 @@
 // Copy this file to config.local.js and update with your private settings
 const LOCAL_CONFIG = {
     baseUrl: 'https://your-private-jira-url.com/browse/',
+    confluenceUrl: 'https://your-private-jira-url.com/wiki/',
     swaggerLinks: [
         {
             name: 'Internal API',

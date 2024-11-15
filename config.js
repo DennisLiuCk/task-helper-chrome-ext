@@ -3,6 +3,7 @@ console.log('Loading config.js');
 // Default configuration - safe to commit
 const DEFAULT_CONFIG = {
   baseUrl: 'https://jira.example.com/browse/',
+  confluenceUrl: 'https://jira.example.com/wiki/',
   taskIdPattern: '^MS-\\d+$',
   maxHistoryItems: 5,
   placeholderText: 'Enter ticket number',

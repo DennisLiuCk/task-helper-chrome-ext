@@ -31,6 +31,14 @@
         <div class="header">
             <h1 id="title"></h1>
         </div>
+        <div class="search-section">
+            <select id="searchType" class="search-type-select">
+                <option value="jira">Jira</option>
+                <option value="confluence">Confluence</option>
+            </select>
+            <input type="text" id="queryInput" placeholder="Search">
+            <button id="searchButton" class="add-button">Search</button>
+        </div>
         <div class="input-container">
             <select id="prefixSelect" class="prefix-select"></select>
             <input type="text" id="taskInput" pattern="\d+">

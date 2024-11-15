@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', async function() {
 	const settingsButton = document.getElementById('settingsButton');
 	const titleElement = document.getElementById('title');
 	const addReleaseGroupButton = document.getElementById('addReleaseGroup');
+	const searchButton = document.getElementById('searchButton');
+	const queryInput = document.getElementById('queryInput');
 
 	try {
 		// Wait for config to load
@@ -200,6 +202,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 								<button class="release-action-button add-to-group" title="Add task">
 									<svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
 										<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+										<path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/>
 									</svg>
 								</button>
 								<button class="release-action-button delete-group" title="Delete group">
@@ -450,6 +453,39 @@ document.addEventListener('DOMContentLoaded', async function() {
 			// Show dialog
 			dialog.style.display = 'flex';
 			taskInput.focus();
+		}
+
+		// Set up search functionality
+		searchButton.addEventListener('click', function() {
+			handleSearch();
+		});
+		
+		queryInput.addEventListener('keypress', function(e) {
+			if (e.key === 'Enter') {
+				handleSearch();
+			}
+		});
+		
+		function handleSearch() {
+			const query = queryInput.value.trim();
+			const searchType = document.getElementById('searchType').value;
+
+			if (!query) {
+				alert('Please enter a search term');
+				return;
+			}
+			
+			let searchUrl;
+			if (searchType === 'jira') {
+				const baseUrl = CONFIG.baseUrl.replace('/browse/', '');
+				const jql = `text ~ %22${encodeURIComponent(query)}%22 ORDER BY updated DESC`;
+				searchUrl = `${baseUrl}/issues/?smartQueryDisabled=false&jql=${jql}`;
+			} else {
+				// Confluence search
+				searchUrl = `${CONFIG.confluenceUrl}search?text=${encodeURIComponent(query)}`;
+			}
+
+			chrome.tabs.create({ url: searchUrl });
 		}
 
 	} catch (error) {

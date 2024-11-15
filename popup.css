@@ -507,3 +507,79 @@ button {
     font-size: 12px;
     padding: 4px 8px;
 }
+
+.search-section {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    align-items: center;
+    width: 100%;
+}
+
+.search-type-select {
+  padding: 4px 8px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #ffffff;
+  cursor: pointer;
+  color: #555;
+  transition: all 0.2s ease;
+}
+
+.search-type-select:hover {
+  border-color: #bdbdbd;
+  background-color: #fafafa;
+}
+
+.search-type-select:focus {
+  outline: none;
+  border-color: #80CBC4;
+  box-shadow: 0 0 0 2px rgba(128, 203, 196, 0.2);
+}
+
+.search-section input {
+    flex: 1;
+    min-width: 0; /* Prevents input from overflowing */
+}
+
+#queryInput {
+    margin-bottom: 0;
+}
+
+/* Common input styles */
+input[type="text"], select, .prefix-select {
+    height: 28px;
+    padding: 4px 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 12px;
+    box-sizing: border-box;
+}
+
+input[type="text"]:focus, select:focus {
+    outline: none;
+    border-color: #1a73e8;
+}
+
+.search-section input {
+    flex: 1;
+}
+
+#queryInput {
+    margin-bottom: 0;
+}
+
+.input-container input {
+    flex: 1;
+}
+
+.input-container select {
+    width: auto;
+}
+
+.container {
+    width: 100%;
+    padding: 16px;
+    box-sizing: border-box;
+}

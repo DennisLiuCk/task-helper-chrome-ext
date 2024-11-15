@@ -64,6 +64,45 @@
             <!-- Swagger links will be added here dynamically -->
         </div>
     </div>
+    
+    <div id="taskSelectionDialog" class="dialog-overlay">
+        <div class="dialog-content">
+            <h2>Add Tasks to Release Group</h2>
+            <div class="dialog-body">
+                <div class="input-section">
+                    <input type="text" id="dialogDateInput" placeholder="Enter group name">
+                </div>
+                <div class="divider">
+                    <span>select tasks from history</span>
+                </div>
+                <div class="history-selection"></div>
+            </div>
+            <div class="dialog-footer">
+                <button class="dialog-button cancel">Cancel</button>
+                <button class="dialog-button confirm">Create Group</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="addTaskDialog" class="dialog-overlay">
+        <div class="dialog-content">
+            <h2>Add Task to Release Group</h2>
+            <div class="dialog-body">
+                <div class="input-section">
+                    <select id="dialogPrefixSelect" class="prefix-select"></select>
+                    <input type="text" id="dialogTaskInput" placeholder="Enter task number">
+                </div>
+                <div class="divider">
+                    <span>or select from history</span>
+                </div>
+                <div class="history-selection"></div>
+            </div>
+            <div class="dialog-footer">
+                <button class="dialog-button cancel">Cancel</button>
+                <button class="dialog-button confirm">Add Task</button>
+            </div>
+        </div>
+    </div>
     <script src="popup.js"></script>
   </body>
-</html> 
+</html>

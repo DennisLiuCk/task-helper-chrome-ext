@@ -253,26 +253,15 @@ document.addEventListener('DOMContentLoaded', async function() {
 					const group = e.target.closest('.release-group');
 					const date = group.dataset.date;
 					
-					chrome.storage.local.get(['history'], function(data) {
+					chrome.storage.local.get(['history'], async function(data) {
 						const history = data.history || [];
-						if (history.length === 0) {
-							alert('No recent tasks available to add');
-							return;
+						try {
+							const config = await getConfig();
+							showAddTaskDialog(date, history, config);
+						} catch (error) {
+							console.error('Error loading config:', error);
+							alert('Error loading configuration. Please try again.');
 						}
-
-						const taskId = prompt('Enter task ID or select from recent:\n\n' + history.join('\n'));
-						if (!taskId) return;
-
-						chrome.storage.local.get(['releaseGroups'], function(data) {
-							const groups = data.releaseGroups || {};
-							groups[date] = groups[date] || [];
-							if (!groups[date].includes(taskId)) {
-								groups[date].push(taskId);
-								chrome.storage.local.set({ releaseGroups: groups }, function() {
-									updateReleaseGroupsDisplay(groups);
-								});
-							}
-						});
 					});
 				});
 			});
@@ -314,20 +303,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 		// Add release group button handler
 		addReleaseGroupButton.addEventListener('click', function() {
-			const date = prompt('Enter release date (e.g., 20240118):');
-			if (!date) return;
-
-			chrome.storage.local.get(['releaseGroups'], function(data) {
-				const groups = data.releaseGroups || {};
-				if (groups[date]) {
-					alert('Release group already exists');
-					return;
-				}
-
-				groups[date] = [];
-				chrome.storage.local.set({ releaseGroups: groups }, function() {
-					updateReleaseGroupsDisplay(groups);
-				});
+			chrome.storage.local.get(['history'], function(data) {
+				const history = data.history || [];
+				showTaskSelectionDialog(history);
 			});
 		});
 
@@ -335,6 +313,144 @@ document.addEventListener('DOMContentLoaded', async function() {
 		chrome.storage.local.get(['releaseGroups'], function(data) {
 			updateReleaseGroupsDisplay(data.releaseGroups || {});
 		});
+
+		function showTaskSelectionDialog(history) {
+			const dialog = document.getElementById('taskSelectionDialog');
+			const historySelection = dialog.querySelector('.history-selection');
+			const cancelButton = dialog.querySelector('.cancel');
+			const confirmButton = dialog.querySelector('.confirm');
+			const dateInput = dialog.querySelector('#dialogDateInput');
+
+			// Populate dialog with history items
+			historySelection.innerHTML = history.map(item => `
+				<div class="history-item" data-id="${item}">
+					<span>${item}</span>
+				</div>
+			`).join('');
+
+			// Handle item selection
+			historySelection.addEventListener('click', function(e) {
+				const item = e.target.closest('.history-item');
+				if (item) {
+					item.classList.toggle('selected');
+				}
+			});
+
+			// Handle dialog buttons
+			cancelButton.onclick = function() {
+				dialog.style.display = 'none';
+			};
+
+			confirmButton.onclick = function() {
+				const groupName = dateInput.value.trim();
+				if (!groupName) {
+					alert('Please enter a group name');
+					return;
+				}
+
+				const selectedItems = Array.from(historySelection.querySelectorAll('.history-item.selected'))
+					.map(item => item.dataset.id);
+
+				chrome.storage.local.get(['releaseGroups'], function(data) {
+					const groups = data.releaseGroups || {};
+					if (groups[groupName]) {
+						alert('Group already exists');
+						return;
+					}
+
+					groups[groupName] = selectedItems;
+					chrome.storage.local.set({ releaseGroups: groups }, function() {
+						updateReleaseGroupsDisplay(groups);
+						dialog.style.display = 'none';
+					});
+				});
+			};
+
+			// Show dialog and focus input
+			dialog.style.display = 'flex';
+			dateInput.focus();
+		}
+
+		function showAddTaskDialog(date, history, config) {
+			const dialog = document.getElementById('addTaskDialog');
+			const historySelection = dialog.querySelector('.history-selection');
+			const cancelButton = dialog.querySelector('.cancel');
+			const confirmButton = dialog.querySelector('.confirm');
+			const prefixSelect = dialog.querySelector('#dialogPrefixSelect');
+			const taskInput = dialog.querySelector('#dialogTaskInput');
+
+			// Initialize prefix selector
+			prefixSelect.innerHTML = config.prefixes.map(prefix => `
+				<option value="${prefix}" ${prefix === config.defaultPrefix ? 'selected' : ''}>
+					${prefix}
+				</option>
+			`).join('');
+
+			// Populate dialog with history items
+			historySelection.innerHTML = history.map(item => `
+				<div class="history-item" data-id="${item}">
+					<span>${item}</span>
+				</div>
+			`).join('');
+
+			// Handle item selection
+			historySelection.addEventListener('click', function(e) {
+				const item = e.target.closest('.history-item');
+				if (item) {
+					// Deselect other items
+					historySelection.querySelectorAll('.history-item').forEach(i => {
+						i.classList.remove('selected');
+					});
+					item.classList.add('selected');
+					
+					// Update input field with selected item
+					const taskId = item.dataset.id;
+					const prefix = taskId.split('-')[0] + '-';
+					const number = taskId.split('-')[1];
+					
+					prefixSelect.value = prefix;
+					taskInput.value = number;
+				}
+			});
+
+			// Handle dialog buttons
+			cancelButton.onclick = function() {
+				dialog.style.display = 'none';
+			};
+
+			confirmButton.onclick = function() {
+				let taskId;
+				
+				if (taskInput.value) {
+					taskId = prefixSelect.value + taskInput.value;
+				} else {
+					const selectedItem = historySelection.querySelector('.history-item.selected');
+					if (!selectedItem) {
+						alert('Please enter a task number or select from history');
+						return;
+					}
+					taskId = selectedItem.dataset.id;
+				}
+
+				chrome.storage.local.get(['releaseGroups'], function(data) {
+					const groups = data.releaseGroups || {};
+					groups[date] = groups[date] || [];
+					if (!groups[date].includes(taskId)) {
+						groups[date].push(taskId);
+						chrome.storage.local.set({ releaseGroups: groups }, function() {
+							updateReleaseGroupsDisplay(groups);
+							dialog.style.display = 'none';
+						});
+					} else {
+						alert('Task already exists in this group');
+					}
+				});
+			};
+
+			// Show dialog
+			dialog.style.display = 'flex';
+			taskInput.focus();
+		}
 
 	} catch (error) {
 		console.error('Error initializing popup:', error);

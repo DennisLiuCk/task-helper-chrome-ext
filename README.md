@@ -1,6 +1,6 @@
 # Task Helper Chrome Extension
 
-A Chrome extension to help you quickly navigate to Jira tickets.
+A Chrome extension to help you quickly navigate to Jira tickets. This tool is designed to make your workflow more efficient and help you stay organized. Feel free to customize it to suit your needs.
 
 ## Features
 

@@ -6,6 +6,10 @@ const LOCAL_CONFIG = {
         {
             name: 'Internal API',
             url: 'https://your-private-api.com/swagger-ui.html'
+        },
+        {
+            name: 'External API',
+            url: 'https://external-api.com/swagger-ui.html'
         }
     ]
     // Add any other private configuration overrides here

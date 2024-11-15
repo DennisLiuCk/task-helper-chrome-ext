@@ -14,6 +14,10 @@ const DEFAULT_CONFIG = {
     {
       name: 'Example API',
       url: 'https://api.example.com/swagger-ui.html'
+    },
+    {
+      name: 'Another API',
+      url: 'https://api.another.com/swagger-ui.html'
     }
   ]
 };

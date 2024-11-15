@@ -200,14 +200,14 @@ document.addEventListener('DOMContentLoaded', async function() {
 							<span class="release-title">${date}</span>
 							<div class="release-actions">
 								<button class="release-action-button add-to-group" title="Add task">
-									<svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-										<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-										<path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/>
+									<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+										<path d="M8 2a1 1 0 0 1 1 1v4h4a1 1 0 1 1 0 2H9v4a1 1 0 0 1-2 0V9H3a1 1 0 1 1 0-2h4V3a1 1 0 0 1 1-1z"/>
 									</svg>
 								</button>
 								<button class="release-action-button delete-group" title="Delete group">
-									<svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-										<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+									<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+										<path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+										<path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118z"/>
 									</svg>
 								</button>
 							</div>
@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 								<div class="release-item" data-id="${id}">
 									<span>${id}</span>
 									<button class="release-action-button remove-from-group" title="Remove from group">
-										<svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+										<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
 											<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
 										</svg>
 									</button>
@@ -476,12 +476,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 			}
 			
 			let searchUrl;
-			if (searchType === 'jira') {
+			if (searchType === 'browse') {
 				const baseUrl = CONFIG.baseUrl.replace('/browse/', '');
 				const jql = `text ~ %22${encodeURIComponent(query)}%22 ORDER BY updated DESC`;
 				searchUrl = `${baseUrl}/issues/?smartQueryDisabled=false&jql=${jql}`;
 			} else {
-				// Confluence search
+				// Wiki search
 				searchUrl = `${CONFIG.confluenceUrl}search?text=${encodeURIComponent(query)}`;
 			}
 

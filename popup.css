@@ -75,6 +75,8 @@ h2 {
   align-items: center;
   justify-content: center;
   border-radius: 4px;
+  height: 28px;
+  width: 28px;
 }
 
 .icon-button:hover {
@@ -144,6 +146,7 @@ h2 {
   border: 1px solid #ccc;
   border-radius: 4px;
   cursor: pointer;
+  height: 28px;
 }
 
 .clear-button:hover {
@@ -162,6 +165,8 @@ h2 {
   align-items: center;
   justify-content: center;
   margin-left: 8px;
+  height: 28px;
+  width: 28px;
 }
 
 .settings-button:hover {
@@ -197,12 +202,7 @@ h2 {
     display: flex;
     align-items: center;
     gap: 6px;
-}
-
-.tab-icon {
-    width: 16px;
-    height: 16px;
-    opacity: 0.7;
+    height: 28px;
 }
 
 .tab-button:hover {
@@ -302,6 +302,8 @@ h2 {
     cursor: pointer;
     color: #666;
     border-radius: 4px;
+    height: 28px;
+    width: 28px;
 }
 
 .release-action-button:hover {
@@ -349,6 +351,7 @@ h2 {
   display: flex;
   align-items: center;
   gap: 4px;
+  height: 28px;
 }
 
 .add-button:hover {
@@ -427,7 +430,7 @@ h2 {
     cursor: pointer;
     font-size: 12px;
     min-width: 80px;
-    height: 32px;
+    height: 28px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -506,6 +509,7 @@ h2 {
 button {
     font-size: 12px;
     padding: 4px 8px;
+    height: 28px;
 }
 
 .search-section {

@@ -33,16 +33,24 @@ h2 {
 
 .prefix-select {
   padding: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid #e0e0e0;
   border-radius: 4px;
   font-size: 14px;
-  background-color: #f5f5f5;
+  background-color: #ffffff;
   cursor: pointer;
+  color: #555;
+  transition: all 0.2s ease;
+}
+
+.prefix-select:hover {
+  border-color: #bdbdbd;
+  background-color: #fafafa;
 }
 
 .prefix-select:focus {
   outline: none;
-  border-color: #4CAF50;
+  border-color: #80CBC4;
+  box-shadow: 0 0 0 2px rgba(128, 203, 196, 0.2);
 }
 
 #taskInput {
@@ -316,4 +324,28 @@ h2 {
 .release-item:hover .remove-from-group {
     opacity: 1;
 }
- 
+
+.add-button {
+  padding: 6px 12px;
+  font-size: 13px;
+  color: #555;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.add-button:hover {
+  background-color: #fafafa;
+  border-color: #bdbdbd;
+  color: #424242;
+}
+
+.add-button:active {
+  background-color: #f5f5f5;
+  transform: translateY(1px);
+}

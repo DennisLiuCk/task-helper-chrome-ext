@@ -243,21 +243,28 @@ document.addEventListener('DOMContentLoaded', async function() {
 							${items.map(id => `
 								<div class="release-item" data-id="${id}">
 									<span>${id}</span>
-									<button class="release-action-button remove-from-group" title="Remove from group">
-										<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-											<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-										</svg>
-									</button>
+									<div class="release-item-actions">
+										<button class="release-action-button slack-link" title="Slack Link" data-id="${id}">
+											<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+												<path d="M3.362 10.11c0 .926-.756 1.681-1.681 1.681S0 11.036 0 10.111C0 9.186.756 8.43 1.68 8.43h1.682v1.68zm.846 0c0-.924.756-1.68 1.681-1.68s1.681.756 1.681 1.68v4.21c0 .924-.756 1.68-1.68 1.68a1.685 1.685 0 0 1-1.682-1.68v-4.21zM5.89 3.362c-.926 0-1.682-.756-1.682-1.681S4.964 0 5.89 0s1.68.756 1.68 1.68v1.682H5.89zm0 .846c.924 0 1.68.756 1.68 1.681S6.814 7.57 5.89 7.57H1.68C.757 7.57 0 6.814 0 5.89c0-.926.756-1.682 1.68-1.682h4.21zm6.749 1.682c0-.926.755-1.682 1.68-1.682.925 0 1.681.756 1.681 1.681s-.756 1.681-1.68 1.681h-1.681V5.89zm-.848 0c0 .924-.755 1.68-1.68 1.68A1.685 1.685 0 0 1 8.43 5.89V1.68C8.43.757 9.186 0 10.11 0c.926 0 1.681.756 1.681 1.68v4.21zm-1.681 6.748c.926 0 1.682.756 1.682 1.681S11.036 16 10.11 16s-1.681-.756-1.681-1.68v-1.682h1.68zm0-.847c-.924 0-1.68-.755-1.68-1.68 0-.925.756-1.681 1.68-1.681h4.21c.924 0 1.68.756 1.68 1.68 0 .926-.756 1.681-1.68 1.681h-4.21z"/>
+											</svg>
+										</button>
+										<button class="release-action-button remove-from-group" title="Remove from group">
+											<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+												<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+											</svg>
+										</button>
+									</div>
 								</div>
 							`).join('')}
 						</div>
 					</div>
 				`).join('');
 
-			// Add event listeners for release group actions
 			addReleaseGroupEventListeners();
 		}
 
+		// Add event listeners for release group actions
 		function addReleaseGroupEventListeners() {
 			// Delete group
 			document.querySelectorAll('.delete-group').forEach(button => {
@@ -317,10 +324,39 @@ document.addEventListener('DOMContentLoaded', async function() {
 				});
 			});
 
+			// Add Slack link button handler
+			document.querySelectorAll('.slack-link').forEach(button => {
+				button.addEventListener('click', async function(e) {
+					e.preventDefault();
+					const taskId = this.dataset.id;
+					const date = this.closest('.release-group').dataset.date;
+
+					// Get existing slack links
+					chrome.storage.local.get(['slackLinks'], async function(data) {
+						const slackLinks = data.slackLinks || {};
+						const currentLink = slackLinks[taskId];
+
+						if (currentLink) {
+							// If link exists, open it
+							chrome.tabs.create({ url: currentLink });
+						} else {
+							// If no link exists, prompt to add one
+							const url = prompt('Enter Slack link for task ' + taskId + ':');
+							if (url) {
+								// Save the new link
+								slackLinks[taskId] = url;
+								await chrome.storage.local.set({ slackLinks: slackLinks });
+								console.log('Saved Slack link for task:', taskId, url);
+							}
+						}
+					});
+				});
+			});
+
 			// Click handler for release items
 			document.querySelectorAll('.release-item').forEach(item => {
 				item.addEventListener('click', async function(e) {
-					if (e.target.closest('.remove-from-group')) return;
+					if (e.target.closest('.remove-from-group') || e.target.closest('.slack-link')) return;
 					
 					const taskId = this.dataset.id;
 					const currentConfig = await getConfig();

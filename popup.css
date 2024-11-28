@@ -318,16 +318,30 @@ h2 {
 
 .release-item {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     padding: 4px 8px;
-    background: white;
     border-radius: 4px;
     cursor: pointer;
+    margin: 4px 0;
 }
 
 .release-item:hover {
-    background: #f0f0f0;
+    background-color: #f5f5f5;
+}
+
+.release-item-actions {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.slack-link {
+    color: #1264a3;  /* Slack blue color */
+}
+
+.slack-link:hover {
+    color: #0b4d8c;
 }
 
 .remove-from-group {

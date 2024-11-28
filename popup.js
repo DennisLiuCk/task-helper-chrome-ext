@@ -47,10 +47,37 @@ document.addEventListener('DOMContentLoaded', async function() {
 					<span>${link.name}</span>
 				</div>
 			`).join('');
+
+			// Add click handlers for Swagger links
+			document.querySelectorAll('.swagger-item').forEach(item => {
+				item.addEventListener('click', function() {
+					const url = this.dataset.url;
+					if (url) {
+						chrome.tabs.create({ url });
+					}
+				});
+			});
 		}
 
-		// Initialize Swagger links
-		updateSwaggerLinks(CONFIG.swaggerLinks);
+		// Initial load of Swagger links
+		chrome.storage.local.get(['userConfig'], function(data) {
+			if (data.userConfig && data.userConfig.swaggerLinks) {
+				updateSwaggerLinks(data.userConfig.swaggerLinks);
+			} else {
+				updateSwaggerLinks(CONFIG.swaggerLinks || []);
+			}
+		});
+
+		// Listen for changes in storage
+		chrome.storage.onChanged.addListener(function(changes, namespace) {
+			if (namespace === 'local' && changes.userConfig) {
+				const newConfig = changes.userConfig.newValue;
+				if (newConfig && newConfig.swaggerLinks) {
+					console.log('Swagger links updated:', newConfig.swaggerLinks);
+					updateSwaggerLinks(newConfig.swaggerLinks);
+				}
+			}
+		});
 
 		// Handle Swagger link clicks
 		document.getElementById('swaggerList').addEventListener('click', function(e) {

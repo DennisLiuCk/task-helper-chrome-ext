@@ -197,16 +197,16 @@ document.addEventListener('DOMContentLoaded', async function() {
                 return;
             }
 
-            let url;
-            if (searchType === 'browse') {
-                // For Jira search
-                url = `${configPromise.then(CONFIG => CONFIG.baseUrl)}?jql=text ~ "${encodeURIComponent(query)}"`;
-            } else {
-                // For Confluence wiki search
-                url = `${configPromise.then(CONFIG => CONFIG.confluenceUrl)}?search=${encodeURIComponent(query)}`;
-            }
-
-            chrome.tabs.create({ url: url });
+            // Get config and create URL
+            configPromise.then(CONFIG => {
+                let url;
+                if (searchType === 'browse') {
+                    url = `${CONFIG.baseUrl}?jql=text ~ "${encodeURIComponent(query)}"`;
+                } else {
+                    url = `${CONFIG.confluenceUrl}?search=${encodeURIComponent(query)}`;
+                }
+                chrome.tabs.create({ url });
+            });
         }
 
         // Function to update Swagger links
@@ -346,8 +346,10 @@ document.addEventListener('DOMContentLoaded', async function() {
 
             // Add click handlers for task items
             container.querySelectorAll('.task-item').forEach((item, index) => {
-                item.addEventListener('click', () => {
-                    openTask(history[index]);
+                item.addEventListener('click', async () => {
+                    const currentConfig = await configPromise;
+                    const jiraUrl = `${currentConfig.baseUrl}${history[index]}`;
+                    chrome.tabs.create({ url: jiraUrl });
                 });
             });
         }
@@ -444,7 +446,13 @@ document.addEventListener('DOMContentLoaded', async function() {
             
             try {
                 const config = await configPromise;
-                const url = `${config.jiraUrl}/browse/${taskId}`;
+                console.log('Config loaded:', config); // Add debug log
+                console.log('Base URL:', config.baseUrl); // Add debug log
+                if (!config.baseUrl) {
+                    throw new Error('Base URL not found in config');
+                }
+                const url = `${config.baseUrl}${taskId}`;
+                console.log('Opening URL:', url); // Add debug log
                 chrome.tabs.create({ url });
             } catch (error) {
                 console.error('Error opening task:', error);
@@ -950,4 +958,4 @@ document.addEventListener('DOMContentLoaded', async function() {
     } catch (error) {
         console.error('Error initializing popup:', error);
     }
-}); 
+});

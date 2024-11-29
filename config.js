@@ -28,13 +28,14 @@
     window.configPromise = new Promise((resolve) => {
         // Function to check if LOCAL_CONFIG is available
         const checkLocalConfig = () => {
-            console.log('Checking LOCAL_CONFIG:', !!window.LOCAL_CONFIG);
+            console.log('LOCAL_CONFIG value:', window.LOCAL_CONFIG); // Add debug log
             if (window.LOCAL_CONFIG) {
                 const config = { ...DEFAULT_CONFIG, ...window.LOCAL_CONFIG };
-                delete config.title;
-                resolve({ title: 'Task Helper', ...config });
+                console.log('Final merged config:', config); // Add debug log
+                resolve(config);
             } else {
-                resolve({ title: 'Task Helper', ...DEFAULT_CONFIG });
+                console.log('Using DEFAULT_CONFIG:', DEFAULT_CONFIG); // Add debug log
+                resolve(DEFAULT_CONFIG);
             }
         };
 

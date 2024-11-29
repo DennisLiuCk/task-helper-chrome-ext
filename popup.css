@@ -1100,7 +1100,8 @@ button {
 
 .release-group-tasks {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 1px
 }
 

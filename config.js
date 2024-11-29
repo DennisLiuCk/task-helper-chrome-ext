@@ -1,80 +1,50 @@
-console.log('Loading config.js');
+// Config module
+(function() {
+    console.log('Loading config.js');
 
-// Default configuration - safe to commit
-const DEFAULT_CONFIG = {
-  baseUrl: 'https://jira.example.com/browse/',
-  confluenceUrl: 'https://jira.example.com/wiki/',
-  taskIdPattern: '^MS-\\d+$',
-  maxHistoryItems: 5,
-  placeholderText: 'Enter ticket number',
-  title: 'Task Helper',
-  defaultErrorMessage: 'Please enter a valid ticket number',
-  prefixes: ['MS-', 'BUILD-'],
-  defaultPrefix: 'MS-',
-  swaggerLinks: [
-    {
-      name: 'Example API',
-      url: 'https://api.example.com/swagger-ui.html'
-    },
-    {
-      name: 'Another API',
-      url: 'https://api.another.com/swagger-ui.html'
-    }
-  ]
-};
-
-// Create a promise to handle config loading
-const configPromise = new Promise((resolve) => {
-    // Function to check if LOCAL_CONFIG is available
-    const checkLocalConfig = () => {
-        console.log('Checking LOCAL_CONFIG:', !!window.LOCAL_CONFIG);
-        if (window.LOCAL_CONFIG) {
-            loadConfig();
-        } else {
-            // If LOCAL_CONFIG is not available yet, wait and try again
-            setTimeout(checkLocalConfig, 50);
-        }
-    };
-
-    // Function to load and merge configs
-    const loadConfig = () => {
-        chrome.storage.local.get(['userConfig'], function(data) {
-            // Deep merge function for nested objects
-            const deepMerge = (target, source) => {
-                for (const key in source) {
-                    if (Array.isArray(source[key])) {
-                        target[key] = [...source[key]];
-                    } else if (source[key] instanceof Object && key in target) {
-                        target[key] = deepMerge({...target[key]}, source[key]);
-                    } else {
-                        target[key] = source[key];
-                    }
-                }
-                return target;
-            };
-
-            // Start with default config
-            let config = {...DEFAULT_CONFIG};
-            
-            // Apply user config if exists
-            if (data.userConfig) {
-                console.log('Applying user config:', data.userConfig);
-                config = deepMerge(config, data.userConfig);
+    // Default configuration - safe to commit
+    const DEFAULT_CONFIG = {
+        baseUrl: 'https://jira.example.com/browse/',
+        confluenceUrl: 'https://jira.example.com/wiki/',
+        taskIdPattern: '^MS-\\d+$',
+        maxHistoryItems: 5,
+        placeholderText: 'Enter ticket number',
+        defaultErrorMessage: 'Please enter a valid ticket number',
+        prefixes: ['MS-', 'BUILD-'],
+        defaultPrefix: 'MS-',
+        swaggerLinks: [
+            {
+                name: 'Example API',
+                url: 'https://api.example.com/swagger-ui.html'
+            },
+            {
+                name: 'Another API',
+                url: 'https://api.another.com/swagger-ui.html'
             }
-            
-            // Apply local config (highest priority)
-            console.log('Applying local config:', window.LOCAL_CONFIG);
-            config = deepMerge(config, window.LOCAL_CONFIG);
-
-            config.taskIdPattern = new RegExp(config.taskIdPattern);
-            console.log('Final merged config:', config);
-            resolve(config);
-        });
+        ]
     };
 
-    // Start checking for LOCAL_CONFIG
-    checkLocalConfig();
-});
+    // Create a promise to handle config loading
+    window.configPromise = new Promise((resolve) => {
+        // Function to check if LOCAL_CONFIG is available
+        const checkLocalConfig = () => {
+            console.log('Checking LOCAL_CONFIG:', !!window.LOCAL_CONFIG);
+            if (window.LOCAL_CONFIG) {
+                const config = { ...DEFAULT_CONFIG, ...window.LOCAL_CONFIG };
+                delete config.title;
+                resolve({ title: 'Task Helper', ...config });
+            } else {
+                resolve({ title: 'Task Helper', ...DEFAULT_CONFIG });
+            }
+        };
 
-// Export the promise
-window.getConfig = () => configPromise; 
+        // Check immediately and also set a small timeout as backup
+        checkLocalConfig();
+        setTimeout(checkLocalConfig, 100);
+    });
+
+    // Export getConfig function
+    window.getConfig = async function() {
+        return await window.configPromise;
+    };
+})();

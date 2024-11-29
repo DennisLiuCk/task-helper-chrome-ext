@@ -1,558 +1,953 @@
 document.addEventListener('DOMContentLoaded', async function() {
-	const taskInput = document.getElementById('taskInput');
-	const submitButton = document.getElementById('submitButton');
-	const result = document.getElementById('result');
-	const clearButton = document.getElementById('clearHistory');
-	const settingsButton = document.getElementById('settingsButton');
-	const titleElement = document.getElementById('title');
-	const addReleaseGroupButton = document.getElementById('addReleaseGroup');
-	const searchButton = document.getElementById('searchButton');
-	const queryInput = document.getElementById('queryInput');
+    try {
+        // Initialize all required elements
+        const elements = {
+            prefixSelect: document.getElementById('prefixSelect'),
+            taskInput: document.getElementById('taskInput'),
+            submitButton: document.getElementById('submitButton'),
+            result: document.getElementById('result'),
+            recentTasks: document.getElementById('recentTasks'),
+            clearButton: document.getElementById('clearButton'),
+            searchType: document.getElementById('searchType'),
+            queryInput: document.getElementById('queryInput'),
+            searchButton: document.getElementById('searchButton'),
+            releaseGroups: document.getElementById('releaseGroups'),
+            addReleaseGroup: document.getElementById('addReleaseGroup'),
+            // Dialog elements
+            taskSelectionDialog: document.getElementById('taskSelectionDialog'),
+            addTaskDialog: document.getElementById('addTaskDialog'),
+            dialogDateInput: document.getElementById('dialogDateInput'),
+            dialogPrefixSelect: document.getElementById('dialogPrefixSelect'),
+            dialogTaskInput: document.getElementById('dialogTaskInput'),
+            // Settings
+            settingsButton: document.querySelector('.settings-tab'),
+            swaggerList: document.getElementById('swaggerList'),
+            // Swagger elements
+            addSwagger: document.getElementById('addSwagger'),
+            swaggerName: document.getElementById('swaggerName'),
+            swaggerUrl: document.getElementById('swaggerUrl')
+        };
 
-	try {
-		// Wait for config to load
-		const CONFIG = await getConfig();
-		console.log('Config loaded:', CONFIG); // Debug log
+        // Validate all elements exist
+        Object.entries(elements).forEach(([name, element]) => {
+            if (!element) {
+                throw new Error(`Missing required element: ${name}`);
+            }
+        });
 
-		// Initialize UI with config values
-		titleElement.textContent = CONFIG.title;
-		taskInput.placeholder = CONFIG.placeholderText;
+        // Wait for config to load
+        const configPromise = getConfig();
+        console.log('Config loading...'); // Debug log
 
-		// Initialize prefix selector
-		const prefixSelect = document.getElementById('prefixSelect');
-		CONFIG.prefixes.forEach(prefix => {
-			const option = document.createElement('option');
-			option.value = prefix;
-			option.textContent = prefix;
-			if (prefix === CONFIG.defaultPrefix) {
-				option.selected = true;
-			}
-			prefixSelect.appendChild(option);
-		});
+        // Initialize the extension
+        async function initializeExtension() {
+            try {
+                console.log('Starting extension initialization...');
+                
+                // Wait for config to load
+                const CONFIG = await configPromise;
+                console.log('Default config loaded:', CONFIG);
+                
+                // Load user settings
+                const data = await new Promise(resolve => 
+                    chrome.storage.local.get(['userConfig'], resolve)
+                );
+                const userConfig = data.userConfig || {};
+                console.log('User settings loaded:', userConfig);
 
-		// Initialize Swagger Links
-		function updateSwaggerLinks(links) {
-			const swaggerList = document.getElementById('swaggerList');
-			if (!links || links.length === 0) {
-				swaggerList.innerHTML = '<div class="no-history">No Swagger links configured</div>';
-				return;
-			}
-			
-			swaggerList.innerHTML = links.map(link => `
-				<div class="swagger-item" data-url="${link.url}">
-					<svg viewBox="0 0 16 16" fill="currentColor">
-						<path d="M4.715 6.542L3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z"/>
-						<path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/>
-					</svg>
-					<span>${link.name}</span>
-				</div>
-			`).join('');
+                // Merge configs with user settings taking precedence
+                const mergedConfig = {
+                    ...CONFIG,
+                    ...userConfig,
+                    // Ensure arrays are properly merged
+                    prefixes: userConfig.prefixes || CONFIG.prefixes,
+                    swaggerLinks: userConfig.swaggerLinks || CONFIG.swaggerLinks
+                };
+                console.log('Final merged config:', mergedConfig);
+                
+                // Initialize UI components
+                console.log('Initializing UI components...');
+                initializeUIComponents(mergedConfig);
+                
+                // Initialize settings
+                console.log('Initializing settings...');
+                initializeSettings(mergedConfig);
+                
+                // Initialize Swagger links
+                console.log('Initializing Swagger links...');
+                updateSwaggerLinks(mergedConfig.swaggerLinks || []);
+                
+                // Load history and release groups
+                console.log('Loading history and release groups...');
+                await Promise.all([
+                    loadHistory(),
+                    loadReleaseGroups()
+                ]);
+                
+                console.log('Extension initialization complete');
+            } catch (error) {
+                console.error('Failed to initialize extension:', error);
+            }
+        }
 
-			// Add click handlers for Swagger links
-			document.querySelectorAll('.swagger-item').forEach(item => {
-				item.addEventListener('click', function() {
-					const url = this.dataset.url;
-					if (url) {
-						chrome.tabs.create({ url });
-					}
-				});
-			});
-		}
+        // Initialize UI components with config
+        function initializeUIComponents(config) {
+            console.log('Setting up UI components with config:', config);
+            
+            // Initialize prefix selector
+            const prefixSelect = document.getElementById('prefixSelect');
+            if (prefixSelect) {
+                prefixSelect.innerHTML = config.prefixes.map(prefix => 
+                    `<option value="${prefix}" ${prefix === config.defaultPrefix ? 'selected' : ''}>${prefix}</option>`
+                ).join('');
+                console.log('Prefix selector initialized');
+            }
 
-		// Initial load of Swagger links
-		chrome.storage.local.get(['userConfig'], function(data) {
-			if (data.userConfig && data.userConfig.swaggerLinks) {
-				updateSwaggerLinks(data.userConfig.swaggerLinks);
-			} else {
-				updateSwaggerLinks(CONFIG.swaggerLinks || []);
-			}
-		});
+            // Initialize task input
+            const taskInput = document.getElementById('taskInput');
+            if (taskInput) {
+                taskInput.placeholder = config.placeholderText;
+                console.log('Task input initialized');
+            }
 
-		// Listen for changes in storage
-		chrome.storage.onChanged.addListener(function(changes, namespace) {
-			if (namespace === 'local' && changes.userConfig) {
-				const newConfig = changes.userConfig.newValue;
-				if (newConfig && newConfig.swaggerLinks) {
-					console.log('Swagger links updated:', newConfig.swaggerLinks);
-					updateSwaggerLinks(newConfig.swaggerLinks);
-				}
-			}
-		});
+            // Initialize search handlers
+            const searchButton = document.getElementById('searchButton');
+            const queryInput = document.getElementById('queryInput');
+            if (searchButton && queryInput) {
+                searchButton.addEventListener('click', handleSearch);
+                queryInput.addEventListener('keypress', e => {
+                    if (e.key === 'Enter') handleSearch();
+                });
+                console.log('Search handlers initialized');
+            }
+        }
 
-		// Handle Swagger link clicks
-		document.getElementById('swaggerList').addEventListener('click', function(e) {
-			const item = e.target.closest('.swagger-item');
-			if (item) {
-				const url = item.dataset.url;
-				chrome.tabs.create({ url }, (tab) => {
-					if (chrome.runtime.lastError) {
-						console.error('Error creating tab:', chrome.runtime.lastError);
-						result.textContent = 'Error opening tab: ' + chrome.runtime.lastError.message;
-						return;
-					}
-				});
-			}
-		});
+        // Initialize settings form
+        function initializeSettings(config) {
+            const settingsForm = document.getElementById('settingsForm');
+            if (!settingsForm) {
+                console.log('Settings form not found');
+                return;
+            }
 
-		// Load history when popup opens
-		chrome.storage.local.get(['history'], function(data) {
-			const history = data.history || [];
-			updateHistoryDisplay(history);
-		});
+            console.log('Initializing settings form with config:', config);
 
-		// Settings button handler
-		settingsButton.addEventListener('click', function() {
-			chrome.tabs.create({ url: 'settings.html' });
-		});
+            // Set form values
+            const baseUrlInput = document.getElementById('baseUrl');
+            const maxHistoryInput = document.getElementById('maxHistory');
+            const placeholderInput = document.getElementById('placeholder');
 
-		// Clear history button handler
-		clearButton.addEventListener('click', function() {
-			chrome.storage.local.set({ history: [] }, function() {
-				updateHistoryDisplay([]);
-				result.textContent = 'History cleared';
-			});
-		});
+            if (baseUrlInput) baseUrlInput.value = config.baseUrl;
+            if (maxHistoryInput) maxHistoryInput.value = config.maxHistoryItems;
+            if (placeholderInput) placeholderInput.value = config.placeholderText;
+            
+            // Update prefix list and default prefix
+            updatePrefixList(config.prefixes);
+            updateDefaultPrefixSelect(config.prefixes, config.defaultPrefix);
 
-		// Submit button handler with error handling
-		submitButton.addEventListener('click', handleSubmit);
-		
-		// Also handle Enter key
-		taskInput.addEventListener('keypress', function(e) {
-			if (e.key === 'Enter') {
-				handleSubmit();
-			}
-		});
+            // Add form submit handler
+            settingsForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await saveSettings();
+            });
 
-		async function handleSubmit() {
-			try {
-				const prefix = prefixSelect.value;
-				const number = taskInput.value.trim();
-				const taskId = prefix + number;
+            console.log('Settings form initialized');
+        }
 
-				console.log('Processing task ID:', taskId);
+        // Load and display history
+        async function loadHistory() {
+            return new Promise(resolve => {
+                chrome.storage.local.get(['history'], data => {
+                    if (data.history) {
+                        updateHistoryDisplay(data.history);
+                        console.log('History loaded:', data.history);
+                    }
+                    resolve();
+                });
+            });
+        }
 
-				const currentConfig = await getConfig();
-				const isValidFormat = /^\d+$/.test(number); // Only check if the input is a number
+        // Load and display release groups
+        async function loadReleaseGroups() {
+            return new Promise(resolve => {
+                chrome.storage.local.get(['releaseGroups'], data => {
+                    updateReleaseGroupsDisplay(data.releaseGroups || {});
+                    console.log('Release groups loaded:', data.releaseGroups);
+                    resolve();
+                });
+            });
+        }
 
-				if (number && isValidFormat) {
-					const jiraUrl = `${currentConfig.baseUrl}${taskId}`;
-					console.log('Opening URL:', jiraUrl);
+        // Search functionality
+        elements.searchButton.addEventListener('click', function() {
+            handleSearch();
+        });
 
-					chrome.tabs.create({ url: jiraUrl }, (tab) => {
-						if (chrome.runtime.lastError) {
-							console.error('Error creating tab:', chrome.runtime.lastError);
-							result.textContent = 'Error opening tab: ' + chrome.runtime.lastError.message;
-							return;
-						}
+        elements.queryInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                handleSearch();
+            }
+        });
 
-						chrome.storage.local.get(['history'], function(data) {
-							const history = data.history || [];
-							const newHistory = [taskId, ...history.filter(id => id !== taskId)]
-								.slice(0, currentConfig.maxHistoryItems);
-							chrome.storage.local.set({ history: newHistory });
-							updateHistoryDisplay(newHistory);
-						});
+        function handleSearch() {
+            const query = elements.queryInput.value.trim();
+            const searchType = elements.searchType.value;
+            
+            if (!query) {
+                return;
+            }
 
-						result.textContent = `Opening: ${taskId}`;
-						taskInput.value = '';
-					});
-				} else {
-					result.textContent = 'Please enter a valid ticket number';
-				}
-			} catch (error) {
-				console.error('Error in submit handler:', error);
-				result.textContent = 'Error: ' + error.message;
-			}
-		}
+            let url;
+            if (searchType === 'browse') {
+                // For Jira search
+                url = `${configPromise.then(CONFIG => CONFIG.baseUrl)}?jql=text ~ "${encodeURIComponent(query)}"`;
+            } else {
+                // For Confluence wiki search
+                url = `${configPromise.then(CONFIG => CONFIG.confluenceUrl)}?search=${encodeURIComponent(query)}`;
+            }
 
-		function updateHistoryDisplay(history) {
-			const historyContainer = document.getElementById('history');
-			if (history.length > 0) {
-				historyContainer.innerHTML = history.map(id => 
-					`<div class="history-item" data-id="${id}">${id}</div>`
-				).join('');
-			} else {
-				historyContainer.innerHTML = '<div class="no-history">No recent tasks</div>';
-			}
-		}
+            chrome.tabs.create({ url: url });
+        }
 
-		// Click handler for history items - modified to open URL directly
-		document.getElementById('history').addEventListener('click', async function(e) {
-			if (e.target.classList.contains('history-item')) {
-				const taskId = e.target.dataset.id;
-				const currentConfig = await getConfig();
-				const jiraUrl = `${currentConfig.baseUrl}${taskId}`;
-				
-				chrome.tabs.create({ url: jiraUrl }, (tab) => {
-					if (chrome.runtime.lastError) {
-						console.error('Error creating tab:', chrome.runtime.lastError);
-						result.textContent = 'Error opening tab: ' + chrome.runtime.lastError.message;
-						return;
-					}
-					result.textContent = `Opening: ${taskId}`;
-				});
-			}
-		});
+        // Function to update Swagger links
+        function updateSwaggerLinks(links) {
+            // Get all swagger list containers
+            const containers = document.querySelectorAll('#swaggerList');
+            if (!containers.length) return;
 
-		// Tab switching
-		document.querySelectorAll('.tab-button').forEach(button => {
-			button.addEventListener('click', function() {
-				const tabId = this.dataset.tab;
-				
-				// Update button states
-				document.querySelectorAll('.tab-button').forEach(btn => 
-					btn.classList.remove('active'));
-				this.classList.add('active');
-				
-				// Update content visibility
-				document.querySelectorAll('.tab-content').forEach(content => 
-					content.classList.remove('active'));
-				document.getElementById(`${tabId}Tab`).classList.add('active');
-			});
-		});
+            const content = !links || !links.length 
+                ? '<div class="no-links">No links added yet</div>'
+                : links.map(link => `
+                    <div class="swagger-item">
+                        <div class="swagger-info" data-url="${link.url}">
+                            <div class="swagger-name">${link.name}</div>
+                        </div>
+                        <button type="button" class="remove-btn">Remove</button>
+                    </div>
+                `).join('');
 
-		// Add new function to handle release groups
-		function updateReleaseGroupsDisplay(releaseGroups) {
-			const releaseGroupsContainer = document.getElementById('releaseGroups');
-			
-			if (!releaseGroups || Object.keys(releaseGroups).length === 0) {
-				releaseGroupsContainer.innerHTML = '<div class="no-history">No release groups</div>';
-				return;
-			}
+            // Update all containers with the same content
+            containers.forEach(container => {
+                container.innerHTML = content;
 
-			releaseGroupsContainer.innerHTML = Object.entries(releaseGroups)
-				.map(([date, items]) => `
-					<div class="release-group" data-date="${date}">
-						<div class="release-group-header">
-							<span class="release-title">${date}</span>
-							<div class="release-actions">
-								<button class="release-action-button add-to-group" title="Add task">
-									<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-										<path d="M8 2a1 1 0 0 1 1 1v4h4a1 1 0 1 1 0 2H9v4a1 1 0 0 1-2 0V9H3a1 1 0 1 1 0-2h4V3a1 1 0 0 1 1-1z"/>
-									</svg>
-								</button>
-								<button class="release-action-button delete-group" title="Delete group">
-									<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-										<path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-										<path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118z"/>
-									</svg>
-								</button>
-							</div>
-						</div>
-						<div class="release-items">
-							${items.map(id => `
-								<div class="release-item" data-id="${id}">
-									<span>${id}</span>
-									<div class="release-item-actions">
-										<button class="release-action-button slack-link" title="Slack Link" data-id="${id}">
-											<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-												<path d="M3.362 10.11c0 .926-.756 1.681-1.681 1.681S0 11.036 0 10.111C0 9.186.756 8.43 1.68 8.43h1.682v1.68zm.846 0c0-.924.756-1.68 1.681-1.68s1.681.756 1.681 1.68v4.21c0 .924-.756 1.68-1.68 1.68a1.685 1.685 0 0 1-1.682-1.68v-4.21zM5.89 3.362c-.926 0-1.682-.756-1.682-1.681S4.964 0 5.89 0s1.68.756 1.68 1.68v1.682H5.89zm0 .846c.924 0 1.68.756 1.68 1.681S6.814 7.57 5.89 7.57H1.68C.757 7.57 0 6.814 0 5.89c0-.926.756-1.682 1.68-1.682h4.21zm6.749 1.682c0-.926.755-1.682 1.68-1.682.925 0 1.681.756 1.681 1.681s-.756 1.681-1.68 1.681h-1.681V5.89zm-.848 0c0 .924-.755 1.68-1.68 1.68A1.685 1.685 0 0 1 8.43 5.89V1.68C8.43.757 9.186 0 10.11 0c.926 0 1.681.756 1.681 1.68v4.21zm-1.681 6.748c.926 0 1.682.756 1.682 1.681S11.036 16 10.11 16s-1.681-.756-1.681-1.68v-1.682h1.68zm0-.847c-.924 0-1.68-.755-1.68-1.68 0-.925.756-1.681 1.68-1.681h4.21c.924 0 1.68.756 1.68 1.68 0 .926-.756 1.681-1.68 1.681h-4.21z"/>
-											</svg>
-										</button>
-										<button class="release-action-button remove-from-group" title="Remove from group">
-											<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-												<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-											</svg>
-										</button>
-									</div>
-								</div>
-							`).join('')}
-						</div>
-					</div>
-				`).join('');
+                // Add click handlers
+                container.querySelectorAll('.swagger-info').forEach(info => {
+                    info.addEventListener('click', function() {
+                        chrome.tabs.create({ url: this.dataset.url });
+                    });
+                });
 
-			addReleaseGroupEventListeners();
-		}
+                container.querySelectorAll('.remove-btn').forEach(button => {
+                    button.addEventListener('click', async function(e) {
+                        e.stopPropagation();
+                        const item = this.closest('.swagger-item');
+                        const info = item.querySelector('.swagger-info');
+                        const url = info.dataset.url;
+                        
+                        chrome.storage.local.get(['userConfig'], function(data) {
+                            const config = data.userConfig || {};
+                            config.swaggerLinks = (config.swaggerLinks || []).filter(link => link.url !== url);
+                            chrome.storage.local.set({ userConfig: config }, function() {
+                                updateSwaggerLinks(config.swaggerLinks);
+                            });
+                        });
+                    });
+                });
+            });
+        }
 
-		// Add event listeners for release group actions
-		function addReleaseGroupEventListeners() {
-			// Delete group
-			document.querySelectorAll('.delete-group').forEach(button => {
-				button.addEventListener('click', function(e) {
-					const group = e.target.closest('.release-group');
-					const date = group.dataset.date;
-					
-					if (confirm(`Delete release group ${date}?`)) {
-						chrome.storage.local.get(['releaseGroups'], function(data) {
-							const groups = data.releaseGroups || {};
-							delete groups[date];
-							chrome.storage.local.set({ releaseGroups: groups }, function() {
-								updateReleaseGroupsDisplay(groups);
-							});
-						});
-					}
-				});
-			});
+        // Add event listener for adding new Swagger links
+        if (elements.addSwagger && elements.swaggerName && elements.swaggerUrl) {
+            elements.addSwagger.addEventListener('click', function() {
+                const name = elements.swaggerName.value.trim();
+                const url = elements.swaggerUrl.value.trim();
 
-			// Add task to group
-			document.querySelectorAll('.add-to-group').forEach(button => {
-				button.addEventListener('click', async function(e) {
-					const group = e.target.closest('.release-group');
-					const date = group.dataset.date;
-					
-					chrome.storage.local.get(['history'], async function(data) {
-						const history = data.history || [];
-						try {
-							const config = await getConfig();
-							showAddTaskDialog(date, history, config);
-						} catch (error) {
-							console.error('Error loading config:', error);
-							alert('Error loading configuration. Please try again.');
-						}
-					});
-				});
-			});
+                if (!name || !url) {
+                    alert('Please enter both name and URL');
+                    return;
+                }
 
-			// Remove task from group
-			document.querySelectorAll('.remove-from-group').forEach(button => {
-				button.addEventListener('click', function(e) {
-					const group = e.target.closest('.release-group');
-					const item = e.target.closest('.release-item');
-					const date = group.dataset.date;
-					const taskId = item.dataset.id;
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    alert('Please enter a valid URL starting with http:// or https://');
+                    return;
+                }
 
-					chrome.storage.local.get(['releaseGroups'], function(data) {
-						const groups = data.releaseGroups || {};
-						groups[date] = groups[date].filter(id => id !== taskId);
-						if (groups[date].length === 0) {
-							delete groups[date];
-						}
-						chrome.storage.local.set({ releaseGroups: groups }, function() {
-							updateReleaseGroupsDisplay(groups);
-						});
-					});
-				});
-			});
+                chrome.storage.local.get(['userConfig'], function(data) {
+                    const config = data.userConfig || {};
+                    const links = config.swaggerLinks || [];
+                    
+                    // Check for duplicates
+                    if (links.some(link => link.url === url)) {
+                        alert('This URL already exists in your links');
+                        return;
+                    }
 
-			// Add Slack link button handler
-			document.querySelectorAll('.slack-link').forEach(button => {
-				button.addEventListener('click', async function(e) {
-					e.preventDefault();
-					const taskId = this.dataset.id;
-					const date = this.closest('.release-group').dataset.date;
+                    links.push({ name, url });
+                    config.swaggerLinks = links;
 
-					// Get existing slack links
-					chrome.storage.local.get(['slackLinks'], async function(data) {
-						const slackLinks = data.slackLinks || {};
-						const currentLink = slackLinks[taskId];
+                    chrome.storage.local.set({ userConfig: config }, function() {
+                        // Clear input fields after successful addition
+                        elements.swaggerName.value = '';
+                        elements.swaggerUrl.value = '';
+                        
+                        // Update the display
+                        updateSwaggerLinks(links);
+                    });
+                });
+            });
+        }
 
-						if (currentLink) {
-							// If link exists, open it
-							chrome.tabs.create({ url: currentLink });
-						} else {
-							// If no link exists, prompt to add one
-							const url = prompt('Enter Slack link for task ' + taskId + ':');
-							if (url) {
-								// Save the new link
-								slackLinks[taskId] = url;
-								await chrome.storage.local.set({ slackLinks: slackLinks });
-								console.log('Saved Slack link for task:', taskId, url);
-							}
-						}
-					});
-				});
-			});
+        // Initial load of Swagger links
+        chrome.storage.local.get(['userConfig'], function(data) {
+            const config = data.userConfig || {};
+            updateSwaggerLinks(config.swaggerLinks || []);
+        });
 
-			// Click handler for release items
-			document.querySelectorAll('.release-item').forEach(item => {
-				item.addEventListener('click', async function(e) {
-					if (e.target.closest('.remove-from-group') || e.target.closest('.slack-link')) return;
-					
-					const taskId = this.dataset.id;
-					const currentConfig = await getConfig();
-					const jiraUrl = `${currentConfig.baseUrl}${taskId}`;
-					
-					chrome.tabs.create({ url: jiraUrl });
-				});
-			});
-		}
+        // Listen for changes in storage
+        chrome.storage.onChanged.addListener(function(changes, namespace) {
+            if (namespace === 'local' && changes.userConfig) {
+                const newConfig = changes.userConfig.newValue;
+                if (newConfig && newConfig.swaggerLinks) {
+                    console.log('Swagger links updated:', newConfig.swaggerLinks);
+                    updateSwaggerLinks(newConfig.swaggerLinks);
+                }
+            }
+        });
 
-		// Add release group button handler
-		addReleaseGroupButton.addEventListener('click', function() {
-			chrome.storage.local.get(['history'], function(data) {
-				const history = data.history || [];
-				showTaskSelectionDialog(history);
-			});
-		});
+        // Handle Swagger link clicks
+        elements.swaggerList.addEventListener('click', function(e) {
+            const item = e.target.closest('.swagger-link');
+            if (item) {
+                const url = item.href;
+                chrome.tabs.create({ url: url }, (tab) => {
+                    if (chrome.runtime.lastError) {
+                        console.error('Error creating tab:', chrome.runtime.lastError);
+                        elements.result.textContent = 'Error opening tab: ' + chrome.runtime.lastError.message;
+                        return;
+                    }
+                });
+            }
+        });
 
-		// Load release groups when popup opens
-		chrome.storage.local.get(['releaseGroups'], function(data) {
-			updateReleaseGroupsDisplay(data.releaseGroups || {});
-		});
+        // Update history display
+        function updateHistoryDisplay(history) {
+            const container = elements.recentTasks;
+            
+            if (!history || history.length === 0) {
+                container.innerHTML = '<div class="no-tasks">No recent tasks</div>';
+                return;
+            }
 
-		function showTaskSelectionDialog(history) {
-			const dialog = document.getElementById('taskSelectionDialog');
-			const historySelection = dialog.querySelector('.history-selection');
-			const cancelButton = dialog.querySelector('.cancel');
-			const confirmButton = dialog.querySelector('.confirm');
-			const dateInput = dialog.querySelector('#dialogDateInput');
+            container.innerHTML = history.map(task => `
+                <div class="task-item">
+                    <span class="task-id">${task}</span>
+                </div>
+            `).join('');
 
-			// Populate dialog with history items
-			historySelection.innerHTML = history.map(item => `
-				<div class="history-item" data-id="${item}">
-					<span>${item}</span>
-				</div>
-			`).join('');
+            // Add click handlers for task items
+            container.querySelectorAll('.task-item').forEach((item, index) => {
+                item.addEventListener('click', () => {
+                    openTask(history[index]);
+                });
+            });
+        }
 
-			// Handle item selection
-			historySelection.addEventListener('click', function(e) {
-				const item = e.target.closest('.history-item');
-				if (item) {
-					item.classList.toggle('selected');
-				}
-			});
+        // Clear history button handler
+        elements.clearButton.addEventListener('click', function() {
+            if (confirm('Clear all recent tasks?')) {
+                chrome.storage.local.set({ history: [] }, function() {
+                    updateHistoryDisplay([]);
+                });
+            }
+        });
 
-			// Handle dialog buttons
-			cancelButton.onclick = function() {
-				dialog.style.display = 'none';
-			};
+        // Initialize history
+        chrome.storage.local.get(['history'], function(data) {
+            updateHistoryDisplay(data.history || []);
+        });
 
-			confirmButton.onclick = function() {
-				const groupName = dateInput.value.trim();
-				if (!groupName) {
-					alert('Please enter a group name');
-					return;
-				}
+        // Submit button handler with error handling
+        elements.submitButton.addEventListener('click', handleSubmit);
+        
+        // Also handle Enter key
+        elements.taskInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                handleSubmit();
+            }
+        });
 
-				const selectedItems = Array.from(historySelection.querySelectorAll('.history-item.selected'))
-					.map(item => item.dataset.id);
+        async function handleSubmit() {
+            try {
+                const prefix = elements.prefixSelect.value;
+                const number = elements.taskInput.value.trim();
+                const taskId = prefix + number;
 
-				chrome.storage.local.get(['releaseGroups'], function(data) {
-					const groups = data.releaseGroups || {};
-					if (groups[groupName]) {
-						alert('Group already exists');
-						return;
-					}
+                console.log('Processing task ID:', taskId);
 
-					groups[groupName] = selectedItems;
-					chrome.storage.local.set({ releaseGroups: groups }, function() {
-						updateReleaseGroupsDisplay(groups);
-						dialog.style.display = 'none';
-					});
-				});
-			};
+                const currentConfig = await configPromise;
+                const isValidFormat = /^\d+$/.test(number); // Only check if the input is a number
 
-			// Show dialog and focus input
-			dialog.style.display = 'flex';
-			dateInput.focus();
-		}
+                if (number && isValidFormat) {
+                    const jiraUrl = `${currentConfig.baseUrl}${taskId}`;
+                    console.log('Opening URL:', jiraUrl);
 
-		function showAddTaskDialog(date, history, config) {
-			const dialog = document.getElementById('addTaskDialog');
-			const historySelection = dialog.querySelector('.history-selection');
-			const cancelButton = dialog.querySelector('.cancel');
-			const confirmButton = dialog.querySelector('.confirm');
-			const prefixSelect = dialog.querySelector('#dialogPrefixSelect');
-			const taskInput = dialog.querySelector('#dialogTaskInput');
+                    chrome.tabs.create({ url: jiraUrl }, (tab) => {
+                        if (chrome.runtime.lastError) {
+                            console.error('Error creating tab:', chrome.runtime.lastError);
+                            elements.result.textContent = 'Error opening tab: ' + chrome.runtime.lastError.message;
+                            return;
+                        }
 
-			// Initialize prefix selector
-			prefixSelect.innerHTML = config.prefixes.map(prefix => `
-				<option value="${prefix}" ${prefix === config.defaultPrefix ? 'selected' : ''}>
-					${prefix}
-				</option>
-			`).join('');
+                        chrome.storage.local.get(['history'], function(data) {
+                            const history = data.history || [];
+                            const newHistory = [taskId, ...history.filter(id => id !== taskId)]
+                                .slice(0, currentConfig.maxHistoryItems);
+                            chrome.storage.local.set({ history: newHistory });
+                            updateHistoryDisplay(newHistory);
+                        });
 
-			// Populate dialog with history items
-			historySelection.innerHTML = history.map(item => `
-				<div class="history-item" data-id="${item}">
-					<span>${item}</span>
-				</div>
-			`).join('');
+                        elements.result.textContent = `Opening: ${taskId}`;
+                        elements.taskInput.value = '';
+                    });
+                } else {
+                    elements.result.textContent = 'Please enter a valid ticket number';
+                }
+            } catch (error) {
+                console.error('Error in submit handler:', error);
+                elements.result.textContent = 'Error: ' + error.message;
+            }
+        }
 
-			// Handle item selection
-			historySelection.addEventListener('click', function(e) {
-				const item = e.target.closest('.history-item');
-				if (item) {
-					// Deselect other items
-					historySelection.querySelectorAll('.history-item').forEach(i => {
-						i.classList.remove('selected');
-					});
-					item.classList.add('selected');
-					
-					// Update input field with selected item
-					const taskId = item.dataset.id;
-					const prefix = taskId.split('-')[0] + '-';
-					const number = taskId.split('-')[1];
-					
-					prefixSelect.value = prefix;
-					taskInput.value = number;
-				}
-			});
+        // Tab switching
+        document.querySelectorAll('.nav-tab').forEach(button => {
+            button.addEventListener('click', function() {
+                const tabId = this.dataset.tab;
+                
+                // Remove active class from all tabs and contents
+                document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+                
+                // Add active class to clicked tab and show its content
+                this.classList.add('active');
+                document.getElementById(`${tabId}Tab`).style.display = 'block';
 
-			// Handle dialog buttons
-			cancelButton.onclick = function() {
-				dialog.style.display = 'none';
-			};
+                // If settings tab is clicked, load the settings
+                if (tabId === 'settings') {
+                    loadSettings();
+                }
+            });
+        });
 
-			confirmButton.onclick = function() {
-				let taskId;
-				
-				if (taskInput.value) {
-					taskId = prefixSelect.value + taskInput.value;
-				} else {
-					const selectedItem = historySelection.querySelector('.history-item.selected');
-					if (!selectedItem) {
-						alert('Please enter a task number or select from history');
-						return;
-					}
-					taskId = selectedItem.dataset.id;
-				}
+        // Function to open a task in a new tab
+        async function openTask(taskId) {
+            if (!taskId) return;
+            
+            try {
+                const config = await configPromise;
+                const url = `${config.jiraUrl}/browse/${taskId}`;
+                chrome.tabs.create({ url });
+            } catch (error) {
+                console.error('Error opening task:', error);
+            }
+        }
 
-				chrome.storage.local.get(['releaseGroups'], function(data) {
-					const groups = data.releaseGroups || {};
-					groups[date] = groups[date] || [];
-					if (!groups[date].includes(taskId)) {
-						groups[date].push(taskId);
-						chrome.storage.local.set({ releaseGroups: groups }, function() {
-							updateReleaseGroupsDisplay(groups);
-							dialog.style.display = 'none';
-						});
-					} else {
-						alert('Task already exists in this group');
-					}
-				});
-			};
+        // Function to update release groups display
+        function updateReleaseGroupsDisplay(groups) {
+            const container = elements.releaseGroups;
+            
+            if (!groups || Object.keys(groups).length === 0) {
+                container.innerHTML = '<div class="no-groups">No release groups</div>';
+                return;
+            }
 
-			// Show dialog
-			dialog.style.display = 'flex';
-			taskInput.focus();
-		}
+            container.innerHTML = Object.entries(groups)
+                .sort(([a], [b]) => new Date(b) - new Date(a))
+                .map(([date, tasks]) => `
+                    <div class="release-group" data-date="${date}">
+                        <div class="release-group-header">
+                            <span>${date}</span>
+                            <div class="group-actions">
+                                <button class="action-button add-task" title="Add Task">+</button>
+                                <button class="action-button copy-group" title="Copy Group">📋</button>
+                                <button class="action-button delete-group" title="Delete Group">×</button>
+                            </div>
+                        </div>
+                        <div class="release-group-tasks">
+                            ${tasks.map(task => `
+                                <div class="task-item" data-task-id="${task}">
+                                    <span class="task-id">${task}</span>
+                                    <div class="task-actions">
+                                        <button class="action-button slack-link" title="Slack Link">💬</button>
+                                        <button class="action-button delete" title="Remove Task">×</button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('');
 
-		// Set up search functionality
-		searchButton.addEventListener('click', function() {
-			handleSearch();
-		});
-		
-		queryInput.addEventListener('keypress', function(e) {
-			if (e.key === 'Enter') {
-				handleSearch();
-			}
-		});
-		
-		function handleSearch() {
-			const query = queryInput.value.trim();
-			const searchType = document.getElementById('searchType').value;
+            // Add event listeners for group actions
+            container.querySelectorAll('.release-group').forEach(group => {
+                const date = group.dataset.date;
+                const tasks = groups[date];
 
-			if (!query) {
-				alert('Please enter a search term');
-				return;
-			}
-			
-			let searchUrl;
-			if (searchType === 'browse') {
-				const baseUrl = CONFIG.baseUrl.replace('/browse/', '');
-				const jql = `text ~ %22${encodeURIComponent(query)}%22 ORDER BY updated DESC`;
-				searchUrl = `${baseUrl}/issues/?smartQueryDisabled=false&jql=${jql}`;
-			} else {
-				// Wiki search
-				searchUrl = `${CONFIG.confluenceUrl}search?text=${encodeURIComponent(query)}`;
-			}
+                // Add task button
+                group.querySelector('.add-task').onclick = (e) => {
+                    e.stopPropagation();
+                    showAddTaskDialog(date);
+                };
 
-			chrome.tabs.create({ url: searchUrl });
-		}
+                // Copy group button
+                group.querySelector('.copy-group').onclick = (e) => {
+                    e.stopPropagation();
+                    const taskList = tasks.join('\n');
+                    navigator.clipboard.writeText(taskList);
+                };
 
-	} catch (error) {
-		console.error('Error initializing popup:', error);
-		result.textContent = 'Error initializing: ' + error.message;
-	}
+                // Delete group button
+                group.querySelector('.delete-group').onclick = (e) => {
+                    e.stopPropagation();
+                    if (confirm(`Delete group "${date}"?`)) {
+                        delete groups[date];
+                        chrome.storage.local.set({ releaseGroups: groups }, () => {
+                            updateReleaseGroupsDisplay(groups);
+                        });
+                    }
+                };
+
+                // Task actions
+                group.querySelectorAll('.task-item').forEach((taskItem, taskIndex) => {
+                    const task = tasks[taskIndex];
+
+                    // Slack link button
+                    const slackButton = taskItem.querySelector('.slack-link');
+                    
+                    // Initialize button state
+                    chrome.storage.local.get(['slackLinks'], (result) => {
+                        const slackLinks = result.slackLinks || {};
+                        if (slackLinks[task]) {
+                            slackButton.classList.add('has-link');
+                            slackButton.title = 'Open Slack Thread';
+                        } else {
+                            slackButton.classList.remove('has-link');
+                            slackButton.title = 'Set Slack Link';
+                        }
+                    });
+
+                    slackButton.onclick = async (e) => {
+                        e.stopPropagation();
+                        
+                        // Get existing slack links
+                        const result = await chrome.storage.local.get(['slackLinks']);
+                        const slackLinks = result.slackLinks || {};
+                        
+                        if (slackLinks[task]) {
+                            // If link exists, open it
+                            window.open(slackLinks[task], '_blank');
+                        } else {
+                            // If no link exists, prompt to set one
+                            const url = prompt('Enter Slack thread URL:', '');
+                            if (url) {
+                                slackLinks[task] = url;
+                                await chrome.storage.local.set({ slackLinks });
+                                slackButton.classList.add('has-link');
+                                slackButton.title = 'Open Slack Thread';
+                            }
+                        }
+                    };
+
+                    // Delete task button
+                    taskItem.querySelector('.delete').onclick = (e) => {
+                        e.stopPropagation();
+                        const updatedTasks = tasks.filter(t => t !== task);
+                        groups[date] = updatedTasks;
+                        chrome.storage.local.set({ releaseGroups: groups }, () => {
+                            updateReleaseGroupsDisplay(groups);
+                        });
+                    };
+
+                    // Click on task
+                    taskItem.onclick = (e) => {
+                        if (!e.target.closest('.action-button')) {
+                            openTask(task);
+                        }
+                    };
+                });
+            });
+        }
+
+        // Add release group button handler
+        elements.addReleaseGroup.addEventListener('click', () => {
+            console.log('Add Release Group button clicked');
+            showTaskSelectionDialog();
+        });
+
+        // Function to show task selection dialog
+        function showTaskSelectionDialog() {
+            console.log('Showing task selection dialog');
+            const dialog = elements.taskSelectionDialog;
+            console.log('Dialog element:', dialog);
+            
+            if (!dialog) {
+                console.error('Task selection dialog element not found');
+                return;
+            }
+
+            const dateInput = elements.dialogDateInput;
+            const historySelection = dialog.querySelector('.history-selection');
+            const confirmButton = dialog.querySelector('.confirm');
+            const cancelButton = dialog.querySelector('.cancel');
+
+            // Get current history
+            chrome.storage.local.get(['history'], function(data) {
+                console.log('Loading history:', data.history);
+                const history = data.history || [];
+
+                // Clear and populate history selection
+                historySelection.innerHTML = history.map(task => `
+                    <div class="dialog-task-item">
+                        <label>
+                            <input type="checkbox" value="${task}">
+                            <span>${task}</span>
+                        </label>
+                    </div>
+                `).join('');
+
+                // Clear previous input and set default date
+                dateInput.value = new Date().toISOString().split('T')[0];
+
+                // Show dialog
+                dialog.classList.add('active');
+                console.log('Dialog shown');
+
+                // Handle confirm
+                confirmButton.addEventListener('click', () => {
+                    const selectedDate = dateInput.value;
+                    if (!selectedDate) {
+                        alert('Please select a date');
+                        return;
+                    }
+
+                    // Get selected tasks
+                    const selectedTasks = Array.from(historySelection.querySelectorAll('input[type="checkbox"]:checked'))
+                        .map(checkbox => checkbox.value);
+
+                    // Save the new group
+                    chrome.storage.local.get(['releaseGroups'], function(data) {
+                        const groups = data.releaseGroups || {};
+                        groups[selectedDate] = selectedTasks;
+                        chrome.storage.local.set({ releaseGroups: groups }, function() {
+                            console.log('Release group saved');
+                            dialog.classList.remove('active');
+                            updateReleaseGroupsDisplay(groups);
+                        });
+                    });
+                });
+
+                // Handle cancel
+                cancelButton.addEventListener('click', () => {
+                    dialog.classList.remove('active');
+                });
+            });
+        }
+
+        // Show add task dialog
+        function showAddTaskDialog(groupDate) {
+            const dialog = elements.addTaskDialog;
+            const historySelection = dialog.querySelector('.history-selection');
+            const prefixSelect = elements.dialogPrefixSelect;
+            const taskInput = elements.dialogTaskInput;
+            const confirmButton = dialog.querySelector('.confirm');
+            const cancelButton = dialog.querySelector('.cancel');
+
+            // Get current config and history
+            Promise.all([
+                configPromise,
+                new Promise(resolve => chrome.storage.local.get(['history'], resolve))
+            ]).then(([CONFIG, { history }]) => {
+                // Initialize prefix selector
+                prefixSelect.innerHTML = CONFIG.prefixes.map(prefix => 
+                    `<option value="${prefix}" ${prefix === CONFIG.defaultPrefix ? 'selected' : ''}>${prefix}</option>`
+                ).join('');
+
+                // Clear and populate history selection with horizontal layout
+                historySelection.innerHTML = `
+                    <div class="dialog-history-items">
+                        ${(history || []).map(task => `
+                            <div class="dialog-task-item">
+                                <label>
+                                    <input type="checkbox" value="${task}">
+                                    <span>${task}</span>
+                                </label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+
+                // Clear previous input
+                taskInput.value = '';
+
+                // Show dialog
+                dialog.classList.add('active');
+                taskInput.focus();
+
+                // Handle confirm
+                const handleConfirm = () => {
+                    let taskId = '';
+                    
+                    // Get task ID from input if provided
+                    if (taskInput.value) {
+                        taskId = prefixSelect.value + taskInput.value;
+                    }
+                    
+                    // Get selected tasks from history
+                    const selectedTasks = Array.from(historySelection.querySelectorAll('input[type="checkbox"]:checked'))
+                        .map(checkbox => checkbox.value);
+                    
+                    if (!taskId && selectedTasks.length === 0) {
+                        alert('Please enter a task number or select from history');
+                        return;
+                    }
+
+                    // Combine manually entered task and selected tasks
+                    const tasksToAdd = [...new Set([
+                        ...(taskId ? [taskId] : []),
+                        ...selectedTasks
+                    ])];
+
+                    // Update storage
+                    chrome.storage.local.get(['releaseGroups'], function(data) {
+                        const groups = data.releaseGroups || {};
+                        groups[groupDate] = groups[groupDate] || [];
+                        
+                        // Add new tasks
+                        tasksToAdd.forEach(task => {
+                            if (!groups[groupDate].includes(task)) {
+                                groups[groupDate].push(task);
+                            }
+                        });
+
+                        // Save and update display
+                        chrome.storage.local.set({ releaseGroups: groups }, function() {
+                            updateReleaseGroupsDisplay(groups);
+                            dialog.classList.remove('active');
+                            
+                            // Clear inputs
+                            taskInput.value = '';
+                            historySelection.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+                        });
+                    });
+                };
+
+                // Handle cancel
+                const handleCancel = () => {
+                    dialog.classList.remove('active');
+                    taskInput.value = '';
+                    historySelection.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+                };
+
+                // Remove old event listeners
+                confirmButton.onclick = null;
+                cancelButton.onclick = null;
+                taskInput.onkeypress = null;
+
+                // Add new event listeners
+                confirmButton.addEventListener('click', handleConfirm);
+                cancelButton.addEventListener('click', handleCancel);
+
+                // Handle Enter key in task input
+                taskInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        handleConfirm();
+                    }
+                });
+            }).catch(error => {
+                console.error('Error initializing add task dialog:', error);
+                alert('Error initializing dialog. Please try again.');
+            });
+        }
+
+        // Load release groups when popup opens
+        chrome.storage.local.get(['releaseGroups'], function(data) {
+            updateReleaseGroupsDisplay(data.releaseGroups || {});
+        });
+
+        // Settings functionality
+        const settingsForm = document.getElementById('settingsForm');
+        const resetButton = document.getElementById('resetButton');
+        const addPrefixButton = document.getElementById('addPrefix');
+        const prefixList = document.getElementById('prefixList');
+        const defaultPrefixSelect = document.getElementById('defaultPrefix');
+        
+        async function loadSettings() {
+            try {
+                // Wait for config to be available
+                const CONFIG = await configPromise;
+                
+                chrome.storage.local.get(['userConfig'], function(data) {
+                    const currentConfig = data.userConfig || {};
+                    
+                    // Set values with fallbacks to CONFIG defaults
+                    document.getElementById('baseUrl').value = currentConfig.baseUrl || CONFIG.baseUrl || '';
+                    document.getElementById('maxHistory').value = currentConfig.maxHistoryItems || CONFIG.maxHistoryItems || 10;
+                    document.getElementById('placeholder').value = currentConfig.placeholderText || CONFIG.placeholderText || 'Enter ticket number';
+
+                    // Set prefixes with fallback
+                    const prefixes = currentConfig.prefixes || CONFIG.prefixes || [];
+                    updatePrefixList(prefixes);
+                    updateDefaultPrefixSelect(prefixes, currentConfig.defaultPrefix || CONFIG.defaultPrefix);
+
+                    // Set Swagger links with fallback
+                    const swaggerLinks = currentConfig.swaggerLinks || CONFIG.swaggerLinks || [];
+                    updateSwaggerList(swaggerLinks);
+
+                    console.log('Settings loaded:', {
+                        currentConfig,
+                        CONFIG,
+                        title: document.getElementById('title').value
+                    });
+                });
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        }
+
+        async function saveSettings() {
+            try {
+                const CONFIG = await configPromise;
+                const newSettings = {
+                    baseUrl: document.getElementById('baseUrl').value || CONFIG.baseUrl,
+                    maxHistoryItems: parseInt(document.getElementById('maxHistory').value) || CONFIG.maxHistoryItems,
+                    placeholderText: document.getElementById('placeholder').value || CONFIG.placeholderText,
+                    prefixes: getPrefixesFromList(),
+                    defaultPrefix: document.getElementById('defaultPrefix').value,
+                    swaggerLinks: getSwaggerLinksFromList()
+                };
+
+                chrome.storage.local.set({ userConfig: newSettings }, function() {
+                    if (chrome.runtime.lastError) {
+                        console.error('Error saving settings:', chrome.runtime.lastError);
+                        alert('Failed to save settings. Please try again.');
+                    } else {
+                        // Update UI elements with new settings
+                        document.getElementById('taskInput').placeholder = newSettings.placeholderText;
+                        
+                        updatePrefixList(newSettings.prefixes);
+                        updateDefaultPrefixSelect(newSettings.prefixes, newSettings.defaultPrefix);
+                        updateSwaggerList(newSettings.swaggerLinks);
+                        
+                        alert('Settings saved successfully!');
+                    }
+                });
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                alert('Failed to save settings. Please try again.');
+            }
+        }
+
+        function updatePrefixList(prefixes) {
+            prefixList.innerHTML = '';
+            prefixes.forEach(prefix => {
+                const div = document.createElement('div');
+                div.className = 'prefix-item';
+                div.innerHTML = `
+                    <span>${prefix}</span>
+                    <button type="button" class="remove-btn">Remove</button>
+                `;
+                div.querySelector('.remove-btn').addEventListener('click', function() {
+                    div.remove();
+                    const currentPrefixes = getPrefixesFromList();
+                    updateDefaultPrefixSelect(currentPrefixes);
+                });
+                prefixList.appendChild(div);
+            });
+        }
+
+        function updateDefaultPrefixSelect(prefixes, selectedPrefix = null) {
+            defaultPrefixSelect.innerHTML = prefixes.map(prefix => 
+                `<option value="${prefix}" ${prefix === selectedPrefix ? 'selected' : ''}>${prefix}</option>`
+            ).join('');
+        }
+
+        function getPrefixesFromList() {
+            return Array.from(prefixList.querySelectorAll('.prefix-item')).map(item => item.querySelector('span').textContent);
+        }
+
+        function updateSwaggerList(links) {
+            const swaggerList = document.getElementById('swaggerList');
+            swaggerList.innerHTML = '';
+            links.forEach(link => {
+                const div = document.createElement('div');
+                div.className = 'swagger-item';
+                div.innerHTML = `
+                    <div class="swagger-info" data-url="${link.url}">
+                        <div class="swagger-name">${link.name || 'Unnamed API'}</div>
+                    </div>
+                    <button type="button" class="remove-btn">Remove</button>
+                `;
+
+                // Add click handler to open URL in new tab
+                div.querySelector('.swagger-info').addEventListener('click', function() {
+                    const url = this.dataset.url;
+                    chrome.tabs.create({ url: url });
+                });
+
+                div.querySelector('.remove-btn').addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevent triggering the parent's click event
+                    div.remove();
+                });
+                swaggerList.appendChild(div);
+            });
+        }
+
+        function getSwaggerLinksFromList() {
+            return Array.from(document.querySelectorAll('.swagger-item')).map(item => ({
+                name: item.querySelector('.swagger-name').textContent,
+                url: item.querySelector('.swagger-info').dataset.url
+            }));
+        }
+
+        // Add event listeners for settings
+        if (settingsForm) {
+            addPrefixButton.addEventListener('click', function() {
+                const newPrefix = prompt('Enter new prefix (e.g., "MS-"):');
+                if (newPrefix) {
+                    const formattedPrefix = newPrefix.endsWith('-') ? newPrefix : `${newPrefix}-`;
+                    const currentPrefixes = getPrefixesFromList();
+                    if (!currentPrefixes.includes(formattedPrefix)) {
+                        updatePrefixList([...currentPrefixes, formattedPrefix]);
+                        updateDefaultPrefixSelect([...currentPrefixes, formattedPrefix]);
+                    }
+                }
+            });
+
+            settingsForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveSettings();
+            });
+
+            resetButton.addEventListener('click', async function() {
+                if (confirm('Reset all settings to default?')) {
+                    chrome.storage.local.remove('userConfig', function() {
+                        if (chrome.runtime.lastError) {
+                            console.error('Error resetting settings:', chrome.runtime.lastError);
+                            alert('Failed to reset settings. Please try again.');
+                        } else {
+                            alert('Settings reset to default!');
+                            window.location.reload();
+                        }
+                    });
+                }
+            });
+        }
+
+        // Wait for DOM to be fully loaded before initializing
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeExtension);
+        } else {
+            initializeExtension();
+        }
+    } catch (error) {
+        console.error('Error initializing popup:', error);
+    }
 }); 

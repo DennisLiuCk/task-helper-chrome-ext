@@ -299,8 +299,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         // Initial load of Swagger links
         chrome.storage.local.get(['userConfig'], function(data) {
-            const config = data.userConfig || {};
-            updateSwaggerLinks(config.swaggerLinks || []);
+            updateSwaggerLinks(data.userConfig || {});
         });
 
         // Listen for changes in storage
@@ -476,7 +475,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                             <span>${date}</span>
                             <div class="group-actions">
                                 <button class="action-button add-task" title="Add Task">+</button>
-                                <button class="action-button copy-group" title="Copy Group">📋</button>
                                 <button class="action-button delete-group" title="Delete Group">×</button>
                             </div>
                         </div>
@@ -485,6 +483,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                                 <div class="task-item" data-task-id="${task}">
                                     <span class="task-id">${task}</span>
                                     <div class="task-actions">
+                                        <button class="action-button service-button" title="Service">-</button>
+                                        <button class="action-button status-button" title="Task Status">NA</button>
                                         <button class="action-button slack-link" title="Slack Link">💬</button>
                                         <button class="action-button delete" title="Remove Task">×</button>
                                     </div>
@@ -505,13 +505,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                     showAddTaskDialog(date);
                 };
 
-                // Copy group button
-                group.querySelector('.copy-group').onclick = (e) => {
-                    e.stopPropagation();
-                    const taskList = tasks.join('\n');
-                    navigator.clipboard.writeText(taskList);
-                };
-
                 // Delete group button
                 group.querySelector('.delete-group').onclick = (e) => {
                     e.stopPropagation();
@@ -526,6 +519,103 @@ document.addEventListener('DOMContentLoaded', async function() {
                 // Task actions
                 group.querySelectorAll('.task-item').forEach((taskItem, taskIndex) => {
                     const task = tasks[taskIndex];
+
+                    // Service button
+                    const serviceButton = taskItem.querySelector('.service-button');
+                    chrome.storage.local.get(['taskServices'], (result) => {
+                        const services = result.taskServices || {};
+                        const currentService = services[task] || '-';
+                        serviceButton.textContent = currentService;
+                        serviceButton.classList.remove('service-product', 'service-store', 'service-gateway', 'service-others');
+                        if (currentService !== '-') {
+                            serviceButton.classList.add(`service-${currentService.toLowerCase()}`);
+                        }
+                    });
+
+                    serviceButton.onclick = async (e) => {
+                        e.stopPropagation();
+                        const services = ['PRODUCT', 'STORE', 'GATEWAY', 'OTHERS'];
+                        const result = await chrome.storage.local.get(['taskServices']);
+                        const taskServices = result.taskServices || {};
+                        
+                        // Create and show dropdown
+                        const dropdown = document.createElement('select');
+                        dropdown.className = 'service-dropdown';
+                        dropdown.style.position = 'absolute';
+                        dropdown.style.zIndex = '1000';
+                        
+                        // Add default option
+                        dropdown.add(new Option('-', '-'));
+                        services.forEach(service => {
+                            dropdown.add(new Option(service, service));
+                        });
+                        
+                        // Set current value
+                        dropdown.value = taskServices[task] || '-';
+                        
+                        // Position dropdown under button
+                        const rect = serviceButton.getBoundingClientRect();
+                        dropdown.style.left = rect.left + 'px';
+                        dropdown.style.top = (rect.bottom + 2) + 'px';
+                        
+                        document.body.appendChild(dropdown);
+                        dropdown.focus();
+                        
+                        // Handle selection
+                        dropdown.onchange = async () => {
+                            const selectedService = dropdown.value;
+                            taskServices[task] = selectedService;
+                            await chrome.storage.local.set({ taskServices });
+                            serviceButton.textContent = selectedService;
+                            serviceButton.classList.remove('service-product', 'service-store', 'service-gateway', 'service-others');
+                            if (selectedService !== '-') {
+                                serviceButton.classList.add(`service-${selectedService.toLowerCase()}`);
+                            }
+                            dropdown.remove();
+                        };
+                        
+                        // Remove dropdown when clicking outside
+                        const closeDropdown = (event) => {
+                            if (!dropdown.contains(event.target) && event.target !== serviceButton) {
+                                dropdown.remove();
+                                document.removeEventListener('click', closeDropdown);
+                            }
+                        };
+                        
+                        // Delay adding the click listener to prevent immediate closure
+                        setTimeout(() => {
+                            document.addEventListener('click', closeDropdown);
+                        }, 0);
+                    };
+
+                    // Status button
+                    const statusButton = taskItem.querySelector('.status-button');
+                    chrome.storage.local.get(['taskStatuses'], (result) => {
+                        const statuses = result.taskStatuses || {};
+                        const currentStatus = statuses[task] || 'NA';
+                        statusButton.textContent = currentStatus;
+                        // Remove all status classes first
+                        statusButton.classList.remove('status-na', 'status-dev', 'status-qa');
+                        // Add the current status class
+                        statusButton.classList.add(`status-${currentStatus.toLowerCase()}`);
+                    });
+
+                    statusButton.onclick = async (e) => {
+                        e.stopPropagation();
+                        const states = ['NA', 'DEV', 'QA'];
+                        const result = await chrome.storage.local.get(['taskStatuses']);
+                        const statuses = result.taskStatuses || {};
+                        const currentStatus = statuses[task] || 'NA';
+                        const currentIndex = states.indexOf(currentStatus);
+                        const nextStatus = states[(currentIndex + 1) % states.length];
+                        
+                        statuses[task] = nextStatus;
+                        await chrome.storage.local.set({ taskStatuses: statuses });
+                        statusButton.textContent = nextStatus;
+                        // Update the status class
+                        statusButton.classList.remove('status-na', 'status-dev', 'status-qa');
+                        statusButton.classList.add(`status-${nextStatus.toLowerCase()}`);
+                    };
 
                     // Slack link button
                     const slackButton = taskItem.querySelector('.slack-link');

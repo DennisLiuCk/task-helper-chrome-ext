@@ -312,6 +312,7 @@ body {
 
 .task-actions {
     display: flex;
+    gap: 1px;
     align-items: center;
 }
 
@@ -1100,7 +1101,7 @@ button {
 
 .release-group-tasks {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex-wrap: wrap;
     gap: 1px
 }
@@ -1359,4 +1360,75 @@ button {
 
 .remove-btn:hover {
     background: #cc0000;
+}
+
+.action-button.status-button {
+    min-width: 36px;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 0 8px;
+}
+
+.action-button.status-button.status-na {
+    color: #666;
+    background-color: white;
+    border: 1px solid #ddd;
+}
+
+.action-button.status-button.status-dev {
+    color: white;
+    background-color: #ff9800;
+    border: 1px solid #ff9800;
+}
+
+.action-button.status-button.status-qa {
+    color: white;
+    background-color: #4caf50;
+    border: 1px solid #4caf50;
+}
+
+.action-button.service-button {
+    min-width: 70px;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 0 8px;
+    text-transform: capitalize;
+}
+
+.action-button.service-button.service-product {
+    color: white;
+    background-color: #0052cc;
+    border: 1px solid #0052cc;
+}
+
+.action-button.service-button.service-store {
+    color: white;
+    background-color: #6554c0;
+    border: 1px solid #6554c0;
+}
+
+.action-button.service-button.service-gateway {
+    color: white;
+    background-color: #00b8d9;
+    border: 1px solid #00b8d9;
+}
+
+.action-button.service-button.service-others {
+    color: white;
+    background-color: #6b778c;
+    border: 1px solid #6b778c;
+}
+
+.service-dropdown {
+    min-width: 100px;
+    padding: 4px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.service-dropdown option {
+    padding: 4px;
 }

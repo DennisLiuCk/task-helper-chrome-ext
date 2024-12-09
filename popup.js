@@ -25,7 +25,11 @@ document.addEventListener('DOMContentLoaded', async function() {
             // Swagger elements
             addSwagger: document.getElementById('addSwagger'),
             swaggerName: document.getElementById('swaggerName'),
-            swaggerUrl: document.getElementById('swaggerUrl')
+            swaggerUrl: document.getElementById('swaggerUrl'),
+            // Service elements
+            serviceList: document.getElementById('serviceList'),
+            newServiceInput: document.getElementById('newServiceInput'),
+            addService: document.getElementById('addService'),
         };
 
         // Validate all elements exist
@@ -534,7 +538,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
                     serviceButton.onclick = async (e) => {
                         e.stopPropagation();
-                        const services = ['PRODUCT', 'STORE', 'GATEWAY', 'OTHERS'];
+                        const services = await getAvailableServices();
                         const result = await chrome.storage.local.get(['taskServices']);
                         const taskServices = result.taskServices || {};
                         
@@ -1037,6 +1041,81 @@ document.addEventListener('DOMContentLoaded', async function() {
                     });
                 }
             });
+        }
+
+        // Function to update service list display
+        function updateServiceList(services = []) {
+            if (!elements.serviceList) return;
+            
+            // Ensure services is an array
+            services = Array.isArray(services) ? services : [];
+            
+            elements.serviceList.innerHTML = services.length === 0
+                ? '<div class="no-services">No services added yet</div>'
+                : services.map(service => `
+                    <div class="service-item">
+                        <span>${service}</span>
+                        <button class="remove-btn" data-service="${service}">Remove</button>
+                    </div>
+                `).join('');
+
+            // Add remove button handlers
+            elements.serviceList.querySelectorAll('.remove-btn').forEach(button => {
+                button.onclick = async () => {
+                    const serviceToRemove = button.dataset.service;
+                    const result = await chrome.storage.local.get(['userConfig']);
+                    let config = result.userConfig || {};
+                    
+                    // Initialize services array if it doesn't exist
+                    config.services = Array.isArray(config.services) ? config.services : ['PRODUCT', 'STORE', 'GATEWAY', 'OTHERS'];
+                    
+                    // Remove the specific service
+                    config.services = config.services.filter(s => s !== serviceToRemove);
+                    
+                    // Save updated config
+                    await chrome.storage.local.set({ userConfig: config });
+                    
+                    // Update the display with the filtered services
+                    updateServiceList(config.services);
+                };
+            });
+        }
+
+        // Add service button handler
+        if (elements.addService) {
+            elements.addService.onclick = async () => {
+                const newService = elements.newServiceInput.value.trim().toUpperCase();
+                if (!newService) return;
+
+                const result = await chrome.storage.local.get(['userConfig']);
+                let config = result.userConfig || {};
+                
+                // Initialize services array if it doesn't exist
+                config.services = Array.isArray(config.services) ? config.services : ['PRODUCT', 'STORE', 'GATEWAY', 'OTHERS'];
+
+                if (!config.services.includes(newService)) {
+                    config.services.push(newService);
+                    await chrome.storage.local.set({ userConfig: config });
+                    updateServiceList(config.services);
+                    elements.newServiceInput.value = '';
+                }
+            };
+        }
+
+        // Load services when settings tab is opened
+        document.querySelector('[data-tab="settings"]').addEventListener('click', async () => {
+            const result = await chrome.storage.local.get(['userConfig']);
+            const config = result.userConfig || {};
+            const defaultServices = ['PRODUCT', 'STORE', 'GATEWAY', 'OTHERS'];
+            const services = Array.isArray(config.services) ? config.services : defaultServices;
+            updateServiceList(services);
+        });
+
+        // Function to get available services
+        async function getAvailableServices() {
+            const result = await chrome.storage.local.get(['userConfig']);
+            const config = result.userConfig || {};
+            return Array.isArray(config.services) ? config.services : ['PRODUCT', 'STORE', 'GATEWAY', 'OTHERS'];
         }
 
         // Wait for DOM to be fully loaded before initializing

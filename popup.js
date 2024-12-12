@@ -599,14 +599,14 @@ document.addEventListener('DOMContentLoaded', async function() {
                         const currentStatus = statuses[task] || 'NA';
                         statusButton.textContent = currentStatus;
                         // Remove all status classes first
-                        statusButton.classList.remove('status-na', 'status-dev', 'status-qa');
+                        statusButton.classList.remove('status-na', 'status-dev', 'status-qa', 'status-uat'); // Add status-uat
                         // Add the current status class
                         statusButton.classList.add(`status-${currentStatus.toLowerCase()}`);
                     });
 
                     statusButton.onclick = async (e) => {
                         e.stopPropagation();
-                        const states = ['NA', 'DEV', 'QA'];
+                        const states = ['NA', 'DEV', 'QA', 'UAT']; // Add UAT to the states array
                         const result = await chrome.storage.local.get(['taskStatuses']);
                         const statuses = result.taskStatuses || {};
                         const currentStatus = statuses[task] || 'NA';
@@ -617,7 +617,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         await chrome.storage.local.set({ taskStatuses: statuses });
                         statusButton.textContent = nextStatus;
                         // Update the status class
-                        statusButton.classList.remove('status-na', 'status-dev', 'status-qa');
+                        statusButton.classList.remove('status-na', 'status-dev', 'status-qa', 'status-uat'); // Add status-uat
                         statusButton.classList.add(`status-${nextStatus.toLowerCase()}`);
                     };
 

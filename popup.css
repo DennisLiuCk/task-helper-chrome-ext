@@ -1387,6 +1387,12 @@ button {
     border: 1px solid #4caf50;
 }
 
+.action-button.status-button.status-uat {
+    color: white;
+    background-color: #0052cc;
+    border: 1px solid #0052cc;
+}   
+
 .action-button.service-button {
     min-width: 70px;
     font-size: 12px;

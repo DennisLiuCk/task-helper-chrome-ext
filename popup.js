@@ -934,9 +934,18 @@ document.addEventListener('DOMContentLoaded', async function() {
                         // Update UI elements with new settings
                         document.getElementById('taskInput').placeholder = newSettings.placeholderText;
                         
+                        // Update settings UI
                         updatePrefixList(newSettings.prefixes);
                         updateDefaultPrefixSelect(newSettings.prefixes, newSettings.defaultPrefix);
                         updateSwaggerList(newSettings.swaggerLinks);
+                        
+                        // Update main UI prefix selector
+                        const prefixSelect = document.getElementById('prefixSelect');
+                        if (prefixSelect) {
+                            prefixSelect.innerHTML = newSettings.prefixes.map(prefix => 
+                                `<option value="${prefix}" ${prefix === newSettings.defaultPrefix ? 'selected' : ''}>${prefix}</option>`
+                            ).join('');
+                        }
                         
                         alert('Settings saved successfully!');
                     }
@@ -1092,7 +1101,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 
                 // Initialize services array if it doesn't exist
                 config.services = Array.isArray(config.services) ? config.services : ['PRODUCT', 'STORE', 'GATEWAY', 'OTHERS'];
-
+                
                 if (!config.services.includes(newService)) {
                     config.services.push(newService);
                     await chrome.storage.local.set({ userConfig: config });

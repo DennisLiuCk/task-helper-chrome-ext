@@ -28,6 +28,11 @@
 
     <div class="content">
       <p class="placeholder">Dashboard 內容建構中...</p>
+      <div class="dev-links">
+        <router-link to="/showcase" class="dev-link">
+          查看組件展示頁面 →
+        </router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -94,5 +99,27 @@ const stats = computed(() => taskStore.statistics);
   text-align: center;
   color: var(--text-secondary);
   font-size: var(--text-base);
+  margin-bottom: var(--spacing-4);
+}
+
+.dev-links {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-3);
+}
+
+.dev-link {
+  color: var(--primary-500);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--radius-md);
+  transition: var(--transition-colors);
+}
+
+.dev-link:hover {
+  background: var(--primary-100);
+  color: var(--primary-700);
 }
 </style>

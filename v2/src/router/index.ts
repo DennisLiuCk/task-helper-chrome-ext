@@ -31,6 +31,11 @@ const routes: RouteRecordRaw[] = [
     name: 'Settings',
     component: () => import('@/views/Settings.vue'),
   },
+  {
+    path: '/showcase',
+    name: 'ComponentShowcase',
+    component: () => import('@/views/ComponentShowcase.vue'),
+  },
 ];
 
 const router = createRouter({

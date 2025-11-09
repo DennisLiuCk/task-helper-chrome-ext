@@ -1,12 +1,16 @@
 <template>
   <div id="app" class="app-container">
-    <RouterView />
+    <Navbar />
+    <div class="app-content">
+      <RouterView />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { useSettingsStore } from '@/stores/settings';
+import Navbar from '@/components/common/Navbar.vue';
 
 const settingsStore = useSettingsStore();
 
@@ -36,5 +40,12 @@ function applyTheme() {
   min-height: 600px;
   background: var(--background);
   color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+.app-content {
+  flex: 1;
+  overflow-y: auto;
 }
 </style>

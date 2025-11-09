@@ -69,6 +69,14 @@
 
     <!-- Toast Container -->
     <ToastContainer />
+
+    <!-- Welcome Modal -->
+    <WelcomeModal
+      :show="showWelcome"
+      @close="showWelcome = false"
+      @load-sample="loadSampleData"
+      @skip="handleSkipWelcome"
+    />
   </div>
 </template>
 
@@ -83,18 +91,29 @@ import BatchActionsToolbar from '@/components/task/BatchActionsToolbar.vue';
 import Button from '@/components/common/Button.vue';
 import Badge from '@/components/common/Badge.vue';
 import ToastContainer from '@/components/common/ToastContainer.vue';
+import WelcomeModal from '@/components/common/WelcomeModal.vue';
+import { useToast } from '@/composables/useToast';
+import { STORAGE_KEYS } from '@/types/storage';
 
 const taskStore = useTaskStore();
+const { success } = useToast();
 
 const showTaskForm = ref(false);
 const editingTask = ref<Task | null>(null);
 const batchSelectMode = ref(false);
 const selectedTasks = ref<Task[]>([]);
 const commandPalette = ref<InstanceType<typeof CommandPalette> | null>(null);
+const showWelcome = ref(false);
 
 onMounted(async () => {
   // Load tasks from storage
   await taskStore.loadTasks();
+
+  // Check if first time user
+  const hasSeenWelcome = await chrome.storage.local.get(['hasSeenWelcome']);
+  if (!hasSeenWelcome.hasSeenWelcome && taskStore.allTasks.length === 0) {
+    showWelcome.value = true;
+  }
 });
 
 function openCreateModal() {
@@ -141,6 +160,86 @@ function handleBatchUpdate() {
 
 function openCommandPalette() {
   commandPalette.value?.open();
+}
+
+async function loadSampleData() {
+  const sampleTasks = [
+    {
+      prefix: 'MS-',
+      number: 1001,
+      title: '實現用戶登入功能',
+      status: 'DEV' as const,
+      service: 'Backend',
+      priority: 'HIGH' as const,
+      tags: ['feature', 'authentication'],
+      isPinned: true,
+      isStarred: false,
+      estimatedHours: 8,
+      actualHours: 5,
+    },
+    {
+      prefix: 'MS-',
+      number: 1002,
+      title: '修復購物車計算錯誤',
+      status: 'QA' as const,
+      service: 'Store',
+      priority: 'CRITICAL' as const,
+      tags: ['bug', 'cart'],
+      isPinned: false,
+      isStarred: true,
+      estimatedHours: 4,
+      actualHours: 6,
+    },
+    {
+      prefix: 'MS-',
+      number: 1003,
+      title: '優化首頁載入速度',
+      status: 'DONE' as const,
+      service: 'Frontend',
+      priority: 'MEDIUM' as const,
+      tags: ['performance', 'optimization'],
+      isPinned: false,
+      isStarred: false,
+      estimatedHours: 6,
+      actualHours: 5,
+    },
+    {
+      prefix: 'BUILD-',
+      number: 200,
+      title: '設定 CI/CD 流程',
+      status: 'UAT' as const,
+      service: 'Gateway',
+      priority: 'HIGH' as const,
+      tags: ['devops', 'infrastructure'],
+      isPinned: false,
+      isStarred: true,
+      estimatedHours: 12,
+      actualHours: 10,
+    },
+    {
+      prefix: 'MS-',
+      number: 1004,
+      title: '撰寫 API 文檔',
+      status: 'NA' as const,
+      service: 'Product',
+      priority: 'LOW' as const,
+      tags: ['documentation'],
+      isPinned: false,
+      isStarred: false,
+      estimatedHours: 3,
+    },
+  ];
+
+  for (const task of sampleTasks) {
+    await taskStore.addTask(task);
+  }
+
+  await chrome.storage.local.set({ hasSeenWelcome: true });
+  success(`已創建 ${sampleTasks.length} 個範例任務`);
+}
+
+async function handleSkipWelcome() {
+  await chrome.storage.local.set({ hasSeenWelcome: true });
 }
 </script>
 

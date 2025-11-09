@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Task Helper v2",
+  "version": "2.0.0",
+  "description": "Modern Jira Task Helper - Manage your tasks with elegance",
+  "author": "Dennis Liu",
+  "permissions": [
+    "storage",
+    "tabs"
+  ],
+  "action": {
+    "default_popup": "index.html"
+  }
+}

@@ -124,30 +124,73 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* ═══════════════════════════════════════════════════════════
+   CYBER MODAL - Terminal Window with Power-On Effect
+   ═══════════════════════════════════════════════════════════ */
+
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: var(--z-modal);
   padding: var(--spacing-4);
+
+  /* Cyber grid overlay */
+  background-image:
+    linear-gradient(rgba(0, 217, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 217, 255, 0.02) 1px, transparent 1px);
+  background-size: 30px 30px;
+  background-color: rgba(0, 0, 0, 0.85);
 }
 
 .modal-content {
-  background: var(--background);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-2xl);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--primary-500);
+  box-shadow: 0 0 30px rgba(0, 217, 255, 0.5),
+              0 0 60px rgba(0, 217, 255, 0.3),
+              inset 0 0 20px rgba(0, 217, 255, 0.05),
+              0 20px 60px rgba(0, 0, 0, 0.8);
   max-height: 90vh;
-  overflow: auto;
+  overflow: hidden;
   width: 100%;
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+/* Corner accents - cyberpunk style */
+.modal-content::before,
+.modal-content::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--primary-500);
+  z-index: 1;
+}
+
+.modal-content::before {
+  top: -2px;
+  left: -2px;
+  border-right: none;
+  border-bottom: none;
+  box-shadow: -2px -2px 10px rgba(0, 217, 255, 0.5);
+}
+
+.modal-content::after {
+  bottom: -2px;
+  right: -2px;
+  border-left: none;
+  border-top: none;
+  box-shadow: 2px 2px 10px rgba(0, 217, 255, 0.5);
 }
 
 .modal-sm {
@@ -170,36 +213,65 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--spacing-6);
-  border-bottom: 1px solid var(--border);
+  padding: var(--spacing-4) var(--spacing-6);
+  border-bottom: 2px solid rgba(0, 217, 255, 0.3);
+  background: linear-gradient(
+    180deg,
+    rgba(0, 217, 255, 0.08),
+    transparent
+  );
   flex-shrink: 0;
+  position: relative;
+}
+
+.modal-header::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--primary-500),
+    transparent
+  );
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.8);
 }
 
 .modal-title {
   margin: 0;
   font-size: var(--text-xl);
-  font-weight: var(--font-semibold);
-  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-weight: var(--font-bold);
+  color: var(--primary-400);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 15px rgba(0, 217, 255, 0.6);
 }
 
 .modal-close {
   width: 32px;
   height: 32px;
-  border: none;
-  background: transparent;
-  border-radius: var(--radius-md);
+  border: 1px solid rgba(0, 217, 255, 0.3);
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-secondary);
-  transition: var(--transition-all);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
 }
 
 .modal-close:hover {
-  background: var(--surface-hover);
-  color: var(--text-primary);
+  background: rgba(255, 46, 99, 0.2);
+  border-color: var(--error);
+  color: var(--error);
+  box-shadow: 0 0 15px var(--error-glow);
+  transform: rotate(90deg);
 }
 
 .modal-description {
@@ -207,6 +279,8 @@ onUnmounted(() => {
   margin: 0;
   color: var(--text-secondary);
   font-size: var(--text-sm);
+  font-family: var(--font-mono);
+  line-height: 1.6;
   flex-shrink: 0;
 }
 
@@ -214,21 +288,62 @@ onUnmounted(() => {
   padding: var(--spacing-6);
   overflow-y: auto;
   flex: 1;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Custom scrollbar for modal body */
+.modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--primary-500), var(--primary-700));
+  border-radius: 0;
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
 }
 
 .modal-footer {
-  padding: var(--spacing-6);
-  border-top: 1px solid var(--border);
+  padding: var(--spacing-4) var(--spacing-6);
+  border-top: 2px solid rgba(0, 217, 255, 0.2);
+  background: linear-gradient(
+    0deg,
+    rgba(0, 217, 255, 0.05),
+    transparent
+  );
   display: flex;
   gap: var(--spacing-3);
   justify-content: flex-end;
   flex-shrink: 0;
+  position: relative;
 }
 
-/* Animations */
-.modal-enter-active,
+.modal-footer::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--primary-500),
+    transparent
+  );
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.6);
+}
+
+/* Animations - Power-On CRT Effect */
+.modal-enter-active {
+  transition: opacity 300ms var(--ease-in-out);
+}
+
 .modal-leave-active {
-  transition: opacity var(--duration-base) var(--ease-in-out);
+  transition: opacity 200ms var(--ease-in);
 }
 
 .modal-enter-from,
@@ -236,38 +351,62 @@ onUnmounted(() => {
   opacity: 0;
 }
 
+/* Power-On Animation - CRT Screen Boot */
 .modal-enter-active .modal-content {
-  animation: modalSlideUp var(--duration-base) var(--ease-out);
+  animation: powerOnCRT 500ms cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 .modal-leave-active .modal-content {
-  animation: modalSlideDown var(--duration-base) var(--ease-in);
+  animation: powerOffCRT 300ms cubic-bezier(0.4, 0, 1, 1);
 }
 
-@keyframes modalSlideUp {
-  from {
-    transform: translateY(20px) scale(0.95);
+@keyframes powerOnCRT {
+  0% {
+    transform: scaleY(0.002) scaleX(0);
     opacity: 0;
+    filter: brightness(3);
   }
-  to {
-    transform: translateY(0) scale(1);
+  30% {
+    transform: scaleY(0.002) scaleX(1);
     opacity: 1;
   }
+  50% {
+    transform: scaleY(0.5) scaleX(1);
+    filter: brightness(1.5);
+  }
+  100% {
+    transform: scaleY(1) scaleX(1);
+    opacity: 1;
+    filter: brightness(1);
+  }
 }
 
-@keyframes modalSlideDown {
-  from {
-    transform: translateY(0) scale(1);
+@keyframes powerOffCRT {
+  0% {
+    transform: scaleY(1) scaleX(1);
     opacity: 1;
+    filter: brightness(1);
   }
-  to {
-    transform: translateY(20px) scale(0.95);
+  50% {
+    transform: scaleY(0.01) scaleX(1);
+    opacity: 1;
+    filter: brightness(2);
+  }
+  100% {
+    transform: scaleY(0) scaleX(0.1);
     opacity: 0;
   }
 }
 
-/* Dark Mode */
-:root[data-theme='dark'] .modal-overlay {
-  background: rgba(0, 0, 0, 0.7);
+/* Light Mode Adjustments */
+:root[data-theme='light'] .modal-overlay {
+  background: rgba(249, 250, 251, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+:root[data-theme='light'] .modal-content {
+  background: var(--surface);
+  box-shadow: 0 0 30px rgba(0, 217, 255, 0.3),
+              0 20px 60px rgba(0, 0, 0, 0.2);
 }
 </style>

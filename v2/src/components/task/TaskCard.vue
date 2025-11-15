@@ -251,35 +251,112 @@ function openLink(url: string) {
 </script>
 
 <style scoped>
+/* ═══════════════════════════════════════════════════════════
+   CYBER TASK CARD - Mission Control Task Display
+   ═══════════════════════════════════════════════════════════ */
+
 .task-card {
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);     /* Sharper corners */
   padding: var(--spacing-4);
-  transition: var(--transition-all);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3),
+              0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
+/* Scan line effect on hover */
+.task-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 217, 255, 0.1),
+    transparent
+  );
+  transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.task-card:hover::before {
+  left: 100%;
+}
+
+/* Neon border glow on hover */
 .task-card:hover {
-  border-color: var(--primary-300);
-  box-shadow: var(--shadow-md);
+  border-color: var(--primary-500);
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.4),
+              0 0 30px rgba(0, 217, 255, 0.2),
+              inset 0 0 20px rgba(0, 217, 255, 0.05),
+              0 4px 12px rgba(0, 0, 0, 0.5);
+  transform: translateY(-2px);
 }
 
+/* Pinned state - Amber Warning Glow */
 .task-card--pinned {
-  border-color: var(--warning-400);
-  background: linear-gradient(135deg, var(--surface) 0%, var(--warning-50) 100%);
+  border-color: var(--warning);
+  background: var(--surface);
+  box-shadow: 0 0 20px var(--warning-glow),
+              inset 0 0 20px rgba(255, 184, 0, 0.08),
+              0 4px 12px rgba(0, 0, 0, 0.5);
+  animation: amberPulseCard 3s ease-in-out infinite;
 }
 
+.task-card--pinned::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--warning),
+    transparent
+  );
+  box-shadow: 0 0 10px var(--warning);
+}
+
+@keyframes amberPulseCard {
+  0%, 100% {
+    box-shadow: 0 0 20px var(--warning-glow),
+                inset 0 0 20px rgba(255, 184, 0, 0.08),
+                0 4px 12px rgba(0, 0, 0, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 30px var(--warning-glow),
+                inset 0 0 30px rgba(255, 184, 0, 0.12),
+                0 6px 16px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* Starred state - Cyan Accent Border */
 .task-card--starred {
-  border-left: 3px solid var(--warning-500);
+  border-left: 4px solid var(--primary-500);
+  box-shadow: -4px 0 15px rgba(0, 217, 255, 0.4),
+              inset 0 0 10px rgba(0, 0, 0, 0.3),
+              0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
-/* Header */
+/* Header - Terminal Command Bar */
 .task-card__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--spacing-3);
+  padding-bottom: var(--spacing-2);
+  border-bottom: 1px solid rgba(0, 217, 255, 0.15);
+  position: relative;
+  z-index: 2;
 }
 
 .task-card__id {
@@ -290,9 +367,16 @@ function openLink(url: string) {
 
 .task-id {
   font-family: var(--font-mono);
-  font-weight: var(--font-semibold);
+  font-weight: var(--font-bold);
   font-size: var(--text-sm);
-  color: var(--primary-600);
+  color: var(--primary-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+  padding: var(--spacing-1) var(--spacing-2);
+  background: rgba(0, 217, 255, 0.05);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0, 217, 255, 0.2);
 }
 
 .task-card__actions {
@@ -303,42 +387,54 @@ function openLink(url: string) {
 .task-action {
   width: 28px;
   height: 28px;
-  border: none;
+  border: 1px solid transparent;
   background: transparent;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-secondary);
   font-size: 14px;
-  transition: var(--transition-colors);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .task-action:hover {
-  background: var(--surface-hover);
-  color: var(--text-primary);
+  background: rgba(0, 217, 255, 0.08);
+  border-color: rgba(0, 217, 255, 0.3);
+  color: var(--primary-400);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+  transform: scale(1.1);
 }
 
 .task-action--active {
-  color: var(--warning-500);
+  color: var(--warning);
+  background: rgba(255, 184, 0, 0.1);
+  border-color: var(--warning);
+  box-shadow: 0 0 10px var(--warning-glow);
 }
 
-/* Title */
+/* Title - Mission Objective */
 .task-card__title {
   font-size: var(--text-base);
-  font-weight: var(--font-medium);
+  font-weight: var(--font-semibold);
   color: var(--text-primary);
   margin-bottom: var(--spacing-3);
   line-height: 1.5;
+  position: relative;
+  z-index: 2;
 }
 
-/* Metadata */
+/* Metadata - Data Readout */
 .task-card__metadata {
   display: flex;
   flex-wrap: wrap;
   gap: var(--spacing-3);
   margin-bottom: var(--spacing-3);
+  padding: var(--spacing-2);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0, 217, 255, 0.1);
 }
 
 .task-meta-item {
@@ -351,14 +447,19 @@ function openLink(url: string) {
 .task-meta-label {
   color: var(--text-secondary);
   font-size: var(--text-xs);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .task-meta-value {
   color: var(--text-primary);
-  font-weight: var(--font-medium);
+  font-weight: var(--font-semibold);
+  font-family: var(--font-mono);
+  text-shadow: 0 0 5px rgba(0, 217, 255, 0.3);
 }
 
-/* Tags */
+/* Tags - Data Chips */
 .task-card__tags {
   display: flex;
   flex-wrap: wrap;
@@ -366,26 +467,66 @@ function openLink(url: string) {
   margin-bottom: var(--spacing-3);
 }
 
-/* Notes */
+/* Notes - Terminal Log */
 .task-card__notes {
   font-size: var(--text-sm);
   color: var(--text-secondary);
   margin-bottom: var(--spacing-3);
-  padding: var(--spacing-2);
-  background: var(--background);
-  border-radius: var(--radius-md);
-  border-left: 2px solid var(--primary-300);
+  padding: var(--spacing-3);
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--primary-500);
+  border-right: 1px solid rgba(0, 217, 255, 0.2);
+  border-top: 1px solid rgba(0, 217, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+  box-shadow: -3px 0 10px rgba(0, 217, 255, 0.3),
+              inset 0 0 10px rgba(0, 0, 0, 0.5);
+  font-family: var(--font-mono);
+  line-height: 1.6;
+  position: relative;
 }
 
-/* Footer */
+.task-card__notes::before {
+  content: '// NOTE';
+  position: absolute;
+  top: -10px;
+  left: var(--spacing-2);
+  font-size: 9px;
+  color: var(--primary-500);
+  background: var(--surface);
+  padding: 2px var(--spacing-2);
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.1em;
+  font-weight: var(--font-bold);
+}
+
+/* Footer - Status Bar */
 .task-card__footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-top: var(--spacing-3);
-  border-top: 1px solid var(--border);
+  border-top: 1px solid rgba(0, 217, 255, 0.2);
   font-size: var(--text-xs);
   color: var(--text-secondary);
+  font-family: var(--font-mono);
+  position: relative;
+}
+
+.task-card__footer::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 217, 255, 0.5),
+    transparent
+  );
+  box-shadow: 0 0 5px rgba(0, 217, 255, 0.5);
 }
 
 .task-footer-left,
@@ -398,39 +539,134 @@ function openLink(url: string) {
   display: flex;
   align-items: center;
   gap: var(--spacing-1);
+  padding: 2px var(--spacing-2);
+  background: rgba(0, 217, 255, 0.05);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0, 217, 255, 0.15);
 }
 
-/* Quick Status */
+.task-date {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.05em;
+}
+
+/* Quick Status - Command Buttons */
 .task-card__quick-status {
   display: flex;
   gap: var(--spacing-1);
   margin-top: var(--spacing-3);
   padding-top: var(--spacing-3);
-  border-top: 1px solid var(--border);
+  border-top: 1px solid rgba(0, 217, 255, 0.15);
+  position: relative;
+}
+
+.task-card__quick-status::before {
+  content: 'QUICK STATUS';
+  position: absolute;
+  top: -8px;
+  left: var(--spacing-2);
+  font-size: 8px;
+  color: var(--text-secondary);
+  background: var(--surface);
+  padding: 0 var(--spacing-1);
+  letter-spacing: 0.1em;
+  font-family: var(--font-mono);
+  font-weight: var(--font-bold);
 }
 
 .quick-status-btn {
   flex: 1;
   padding: var(--spacing-1) var(--spacing-2);
-  border: 1px solid var(--border);
-  background: var(--background);
-  border-radius: var(--radius-md);
-  font-size: var(--text-xs);
-  font-weight: var(--font-medium);
+  border: 1px solid rgba(0, 217, 255, 0.2);
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: var(--radius-sm);
+  font-size: 9px;
+  font-weight: var(--font-bold);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   color: var(--text-secondary);
   cursor: pointer;
-  transition: var(--transition-all);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.quick-status-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transform: translateX(-100%);
+  transition: transform 0.3s;
 }
 
 .quick-status-btn:hover {
-  border-color: var(--primary-400);
-  color: var(--primary-600);
-  background: var(--primary-50);
+  border-color: var(--primary-500);
+  color: var(--primary-400);
+  background: rgba(0, 217, 255, 0.1);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.3),
+              inset 0 0 10px rgba(0, 217, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.quick-status-btn:hover::before {
+  transform: translateX(100%);
 }
 
 .quick-status-btn--active {
   border-color: var(--primary-500);
-  background: var(--primary-500);
-  color: white;
+  background: rgba(0, 217, 255, 0.2);
+  color: var(--primary-400);
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.5),
+              inset 0 0 15px rgba(0, 217, 255, 0.2);
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.8);
+}
+
+/* Status-specific colors on active */
+.quick-status-btn--active:nth-child(1) { /* NA - Gray */
+  border-color: var(--status-na);
+  color: var(--status-na-hover);
+  background: var(--status-na-bg);
+}
+
+.quick-status-btn--active:nth-child(2) { /* DEV - Amber */
+  border-color: var(--status-dev);
+  color: var(--status-dev);
+  background: var(--status-dev-bg);
+  box-shadow: 0 0 15px var(--status-dev-glow);
+  text-shadow: 0 0 8px rgba(255, 184, 0, 0.6);
+}
+
+.quick-status-btn--active:nth-child(3) { /* QA - Green */
+  border-color: var(--status-qa);
+  color: var(--status-qa);
+  background: var(--status-qa-bg);
+  box-shadow: 0 0 15px var(--status-qa-glow);
+  text-shadow: 0 0 10px rgba(57, 255, 20, 0.8);
+}
+
+.quick-status-btn--active:nth-child(4) { /* UAT - Purple */
+  border-color: var(--status-uat);
+  color: var(--status-uat);
+  background: var(--status-uat-bg);
+  box-shadow: 0 0 15px var(--status-uat-glow);
+  text-shadow: 0 0 8px rgba(181, 55, 242, 0.6);
+}
+
+.quick-status-btn--active:nth-child(5) { /* DONE - Cyan */
+  border-color: var(--status-done);
+  color: var(--status-done);
+  background: var(--status-done-bg);
+  box-shadow: 0 0 20px var(--status-done-glow);
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.8);
 }
 </style>

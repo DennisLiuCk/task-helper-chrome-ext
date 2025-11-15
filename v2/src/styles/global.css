@@ -23,9 +23,26 @@ body {
   background-color: var(--background);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Cyber Grid Background Pattern */
+  background-image:
+    linear-gradient(rgba(0, 217, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 217, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(rgba(0, 217, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 217, 255, 0.02) 1px, transparent 1px);
+  background-size:
+    20px 20px,
+    20px 20px,
+    100px 100px,
+    100px 100px;
+  background-position:
+    0 0,
+    0 0,
+    0 0,
+    0 0;
 }
 
-/* Typography */
+/* Typography - Terminal Monospace for Headings */
 h1,
 h2,
 h3,
@@ -33,17 +50,25 @@ h4,
 h5,
 h6 {
   margin: 0;
-  font-weight: var(--font-semibold);
+  font-family: var(--font-display);  /* Monospace for technical feel */
+  font-weight: var(--font-bold);
   line-height: var(--leading-tight);
   color: var(--text-primary);
+  letter-spacing: -0.02em;           /* Tighter tracking */
+  text-transform: uppercase;         /* Command-line style */
 }
 
 h1 {
   font-size: var(--text-3xl);
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-300));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 h2 {
   font-size: var(--text-2xl);
+  color: var(--text-accent);
 }
 
 h3 {
@@ -70,11 +95,32 @@ a {
   color: var(--primary-500);
   text-decoration: none;
   transition: var(--transition-colors);
+  position: relative;
 }
 
 a:hover {
-  color: var(--primary-600);
-  text-decoration: underline;
+  color: var(--primary-400);
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+}
+
+a:hover::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    var(--primary-500),
+    transparent
+  );
+  animation: scanLine 0.8s ease-in-out;
+}
+
+@keyframes scanLine {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
 }
 
 /* Lists */
@@ -114,37 +160,64 @@ select:focus {
   outline: none;
 }
 
-/* Scrollbar */
+/* Scrollbar - Neon Cyber Style */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--surface-variant);
-  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border-left: 1px solid var(--border);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg,
+    var(--primary-500),
+    var(--primary-700)
+  );
+  border-radius: 0;  /* Sharp edges for cyber aesthetic */
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
   transition: var(--transition-colors);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--border-strong);
+  background: linear-gradient(180deg,
+    var(--primary-400),
+    var(--primary-600)
+  );
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.8);
 }
 
-/* Focus Styles */
+::-webkit-scrollbar-corner {
+  background: var(--surface);
+}
+
+/* Focus Styles - Neon Glow */
 :focus-visible {
   outline: 2px solid var(--primary-500);
   outline-offset: 2px;
+  box-shadow: var(--shadow-focus);
+  animation: focusPulse 1.5s ease-in-out infinite;
 }
 
-/* Selection */
+@keyframes focusPulse {
+  0%, 100% {
+    box-shadow: var(--shadow-focus);
+  }
+  50% {
+    box-shadow: 0 0 0 2px var(--background),
+                0 0 0 4px var(--primary-500),
+                0 0 30px rgba(0, 217, 255, 0.6),
+                0 0 50px rgba(0, 217, 255, 0.4);
+  }
+}
+
+/* Selection - Neon Highlight */
 ::selection {
-  background: var(--primary-alpha-20);
-  color: var(--text-primary);
+  background: var(--primary-alpha-50);
+  color: var(--background);
+  text-shadow: 0 0 8px rgba(0, 217, 255, 0.8);
 }
 
 /* Utility Classes */

@@ -78,25 +78,54 @@ function handleClick(event: MouseEvent) {
 </script>
 
 <style scoped>
+/* ═══════════════════════════════════════════════════════════
+   CYBER COMMAND BUTTON - Neon-edged Terminal Controls
+   ═══════════════════════════════════════════════════════════ */
+
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--spacing-2);
-  border-radius: var(--radius-md);
-  font-family: var(--font-sans);
-  font-weight: var(--font-medium);
+  border-radius: var(--radius-sm);  /* Sharper corners */
+  font-family: var(--font-mono);    /* Monospace for technical feel */
+  font-weight: var(--font-semibold);
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;           /* Wider letter spacing */
   cursor: pointer;
   white-space: nowrap;
   user-select: none;
-  transition: var(--transition-all);
-  border: 1px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid transparent;    /* Thicker border for neon effect */
   position: relative;
+  overflow: hidden;
+}
+
+/* Cyber scan line effect on hover */
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.btn:hover::before {
+  left: 100%;
 }
 
 .btn:focus-visible {
-  outline: 2px solid var(--primary-500);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: var(--shadow-focus);
 }
 
 /* Sizes */
@@ -125,89 +154,117 @@ function handleClick(event: MouseEvent) {
   font-size: var(--text-lg);
 }
 
-/* Primary Variant */
+/* Primary Variant - Neon Cyan Glow */
 .btn-primary {
-  background: var(--primary-500);
-  color: white;
-  box-shadow: var(--shadow-sm);
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+  color: var(--background);
+  border-color: var(--primary-500);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.3),
+              0 4px 8px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--primary-600);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-400));
+  border-color: var(--primary-400);
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.6),
+              0 0 30px rgba(0, 217, 255, 0.4),
+              0 6px 12px rgba(0, 0, 0, 0.5);
+  transform: translateY(-2px);
 }
 
 .btn-primary:active:not(:disabled) {
-  background: var(--primary-700);
-  box-shadow: var(--shadow-sm);
+  background: linear-gradient(135deg, var(--primary-700), var(--primary-600));
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.4),
+              0 2px 4px rgba(0, 0, 0, 0.6);
   transform: translateY(0);
 }
 
-/* Secondary Variant */
+/* Secondary Variant - Outlined Neon */
 .btn-secondary {
-  background: transparent;
+  background: var(--surface);
   color: var(--primary-500);
   border-color: var(--primary-500);
+  box-shadow: inset 0 0 10px rgba(0, 217, 255, 0.1);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: var(--primary-50);
-  border-color: var(--primary-600);
-  color: var(--primary-600);
+  background: var(--primary-alpha-10);
+  border-color: var(--primary-400);
+  color: var(--primary-400);
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.4),
+              inset 0 0 20px rgba(0, 217, 255, 0.2);
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.6);
 }
 
 .btn-secondary:active:not(:disabled) {
-  background: var(--primary-100);
+  background: var(--primary-alpha-20);
+  box-shadow: inset 0 0 10px rgba(0, 217, 255, 0.3);
 }
 
-/* Tertiary Variant */
+/* Tertiary Variant - Muted Surface */
 .btn-tertiary {
   background: var(--surface-variant);
-  color: var(--text-primary);
+  color: var(--text-secondary);
   border-color: var(--border);
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
 .btn-tertiary:hover:not(:disabled) {
   background: var(--surface-hover);
   border-color: var(--border-strong);
+  color: var(--text-primary);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.2),
+              inset 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 .btn-tertiary:active:not(:disabled) {
-  background: var(--border);
+  background: var(--surface);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4);
 }
 
-/* Ghost Variant */
+/* Ghost Variant - Minimal Glow on Hover */
 .btn-ghost {
   background: transparent;
-  color: var(--text-primary);
+  color: var(--text-secondary);
   border-color: transparent;
 }
 
 .btn-ghost:hover:not(:disabled) {
-  background: var(--surface-hover);
+  background: rgba(0, 217, 255, 0.05);
+  border-color: rgba(0, 217, 255, 0.2);
+  color: var(--text-primary);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
 }
 
 .btn-ghost:active:not(:disabled) {
-  background: var(--surface-variant);
+  background: rgba(0, 217, 255, 0.1);
+  box-shadow: inset 0 0 10px rgba(0, 217, 255, 0.2);
 }
 
-/* Danger Variant */
+/* Danger Variant - Critical Red Alert */
 .btn-danger {
-  background: var(--error);
+  background: linear-gradient(135deg, #FF5282, var(--error));
   color: white;
-  box-shadow: var(--shadow-sm);
+  border-color: var(--error);
+  box-shadow: 0 0 10px rgba(255, 46, 99, 0.4),
+              0 4px 8px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 .btn-danger:hover:not(:disabled) {
-  background: var(--error-hover);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, var(--error), #D91E50);
+  border-color: var(--error-hover);
+  box-shadow: 0 0 20px rgba(255, 46, 99, 0.6),
+              0 0 30px rgba(255, 46, 99, 0.4),
+              0 6px 12px rgba(0, 0, 0, 0.5);
+  transform: translateY(-2px);
 }
 
 .btn-danger:active:not(:disabled) {
-  background: var(--error-hover);
-  box-shadow: var(--shadow-sm);
+  background: linear-gradient(135deg, #D91E50, #C01A45);
+  box-shadow: 0 0 10px rgba(255, 46, 99, 0.4),
+              0 2px 4px rgba(0, 0, 0, 0.6);
   transform: translateY(0);
 }
 
@@ -303,15 +360,16 @@ function handleClick(event: MouseEvent) {
   height: 20px;
 }
 
-/* Dark Mode Adjustments */
-:root[data-theme='dark'] .btn-secondary {
-  color: var(--primary-400);
-  border-color: var(--primary-400);
+/* Light Mode Adjustments (if needed) */
+:root[data-theme='light'] .btn-primary {
+  color: white;  /* Ensure text is readable on light backgrounds */
 }
 
-:root[data-theme='dark'] .btn-secondary:hover:not(:disabled) {
-  background: rgba(66, 165, 245, 0.1);
-  border-color: var(--primary-300);
-  color: var(--primary-300);
+:root[data-theme='light'] .btn-secondary {
+  background: white;
+}
+
+:root[data-theme='light'] .btn-ghost:hover:not(:disabled) {
+  background: rgba(0, 217, 255, 0.08);
 }
 </style>

@@ -1,104 +1,132 @@
 :root {
-  /* Primary Colors - Jira Blue */
-  --primary-50: #e3f2fd;
-  --primary-100: #bbdefb;
-  --primary-200: #90caf9;
-  --primary-300: #64b5f6;
-  --primary-400: #42a5f5;
-  --primary-500: #0052cc;
-  --primary-600: #1e88e5;
-  --primary-700: #1976d2;
-  --primary-800: #1565c0;
-  --primary-900: #0d47a1;
+  /* ═══════════════════════════════════════════════════════════
+     CYBER COMMAND CENTER - Design System
+     Theme: Terminal Cyberpunk meets Swiss Precision
+     ═══════════════════════════════════════════════════════════ */
+
+  /* Primary Accent - Electric Cyan */
+  --primary-50: #e0f9ff;
+  --primary-100: #b3efff;
+  --primary-200: #80e5ff;
+  --primary-300: #4ddbff;
+  --primary-400: #26d4ff;
+  --primary-500: #00D9FF;  /* Electric Cyan - Main */
+  --primary-600: #00c2e6;
+  --primary-700: #00a3bf;
+  --primary-800: #008599;
+  --primary-900: #005966;
 
   /* Primary with opacity */
-  --primary-alpha-10: rgba(0, 82, 204, 0.1);
-  --primary-alpha-20: rgba(0, 82, 204, 0.2);
-  --primary-alpha-50: rgba(0, 82, 204, 0.5);
+  --primary-alpha-10: rgba(0, 217, 255, 0.1);
+  --primary-alpha-20: rgba(0, 217, 255, 0.2);
+  --primary-alpha-50: rgba(0, 217, 255, 0.5);
 
-  /* Status Colors */
-  --status-na: #9e9e9e;
-  --status-na-bg: #f5f5f5;
-  --status-na-hover: #757575;
+  /* Status Colors - Neon Terminal Palette */
+  --status-na: #6B7280;           /* Gray Idle */
+  --status-na-bg: rgba(107, 114, 128, 0.15);
+  --status-na-hover: #9CA3AF;
+  --status-na-glow: rgba(107, 114, 128, 0.4);
 
-  --status-dev: #ff9800;
-  --status-dev-bg: #fff3e0;
-  --status-dev-hover: #f57c00;
+  --status-dev: #FFB800;          /* Amber Alert - In Progress */
+  --status-dev-bg: rgba(255, 184, 0, 0.15);
+  --status-dev-hover: #FFC933;
+  --status-dev-glow: rgba(255, 184, 0, 0.6);
 
-  --status-qa: #4caf50;
-  --status-qa-bg: #e8f5e9;
-  --status-qa-hover: #388e3c;
+  --status-qa: #39FF14;           /* Neon Green - Testing */
+  --status-qa-bg: rgba(57, 255, 20, 0.15);
+  --status-qa-hover: #5AFF47;
+  --status-qa-glow: rgba(57, 255, 20, 0.6);
 
-  --status-uat: #2196f3;
-  --status-uat-bg: #e3f2fd;
-  --status-uat-hover: #1976d2;
+  --status-uat: #B537F2;          /* Cyber Purple - Staging */
+  --status-uat-bg: rgba(181, 55, 242, 0.15);
+  --status-uat-hover: #C554FF;
+  --status-uat-glow: rgba(181, 55, 242, 0.6);
 
-  --status-done: #8bc34a;
-  --status-done-bg: #f1f8e9;
-  --status-done-hover: #689f38;
+  --status-done: #00D9FF;         /* Electric Cyan - Complete */
+  --status-done-bg: rgba(0, 217, 255, 0.15);
+  --status-done-hover: #26E3FF;
+  --status-done-glow: rgba(0, 217, 255, 0.6);
 
-  --status-blocked: #f44336;
-  --status-blocked-bg: #ffebee;
-  --status-blocked-hover: #d32f2f;
+  --status-blocked: #FF2E63;      /* Critical Red - Blocked */
+  --status-blocked-bg: rgba(255, 46, 99, 0.15);
+  --status-blocked-hover: #FF5282;
+  --status-blocked-glow: rgba(255, 46, 99, 0.6);
 
-  /* Service Colors */
-  --service-product: #673ab7;
-  --service-product-bg: #ede7f6;
+  /* Service Colors - Vibrant Neon Palette */
+  --service-product: #B537F2;     /* Cyber Purple */
+  --service-product-bg: rgba(181, 55, 242, 0.15);
+  --service-product-glow: rgba(181, 55, 242, 0.5);
 
-  --service-store: #e91e63;
-  --service-store-bg: #fce4ec;
+  --service-store: #FF2E63;       /* Hot Pink */
+  --service-store-bg: rgba(255, 46, 99, 0.15);
+  --service-store-glow: rgba(255, 46, 99, 0.5);
 
-  --service-gateway: #00bcd4;
-  --service-gateway-bg: #e0f7fa;
+  --service-gateway: #00D9FF;     /* Electric Cyan */
+  --service-gateway-bg: rgba(0, 217, 255, 0.15);
+  --service-gateway-glow: rgba(0, 217, 255, 0.5);
 
-  --service-backend: #ff5722;
-  --service-backend-bg: #fbe9e7;
+  --service-backend: #FF6B35;     /* Neon Orange */
+  --service-backend-bg: rgba(255, 107, 53, 0.15);
+  --service-backend-glow: rgba(255, 107, 53, 0.5);
 
-  --service-frontend: #3f51b5;
-  --service-frontend-bg: #e8eaf6;
+  --service-frontend: #00D9FF;    /* Electric Cyan */
+  --service-frontend-bg: rgba(0, 217, 255, 0.15);
+  --service-frontend-glow: rgba(0, 217, 255, 0.5);
 
-  --service-others: #607d8b;
-  --service-others-bg: #eceff1;
+  --service-others: #6B7280;      /* Neutral Gray */
+  --service-others-bg: rgba(107, 114, 128, 0.15);
+  --service-others-glow: rgba(107, 114, 128, 0.5);
 
-  /* Semantic Colors */
-  --success: #4caf50;
-  --success-bg: #e8f5e9;
-  --success-hover: #388e3c;
+  /* Semantic Colors - High Contrast Alerts */
+  --success: #39FF14;             /* Neon Green */
+  --success-bg: rgba(57, 255, 20, 0.15);
+  --success-hover: #5AFF47;
+  --success-glow: rgba(57, 255, 20, 0.6);
 
-  --warning: #ff9800;
-  --warning-bg: #fff3e0;
-  --warning-hover: #f57c00;
+  --warning: #FFB800;             /* Amber Alert */
+  --warning-bg: rgba(255, 184, 0, 0.15);
+  --warning-hover: #FFC933;
+  --warning-glow: rgba(255, 184, 0, 0.6);
 
-  --error: #f44336;
-  --error-bg: #ffebee;
-  --error-hover: #d32f2f;
+  --error: #FF2E63;               /* Critical Red */
+  --error-bg: rgba(255, 46, 99, 0.15);
+  --error-hover: #FF5282;
+  --error-glow: rgba(255, 46, 99, 0.6);
 
-  --info: #2196f3;
-  --info-bg: #e3f2fd;
-  --info-hover: #1976d2;
+  --info: #00D9FF;                /* Electric Cyan */
+  --info-bg: rgba(0, 217, 255, 0.15);
+  --info-hover: #26E3FF;
+  --info-glow: rgba(0, 217, 255, 0.6);
 
-  /* Neutral Colors - Light Mode */
-  --gray-50: #fafafa;
-  --gray-100: #f5f5f5;
-  --gray-200: #eeeeee;
-  --gray-300: #e0e0e0;
-  --gray-400: #bdbdbd;
-  --gray-500: #9e9e9e;
-  --gray-600: #757575;
-  --gray-700: #616161;
-  --gray-800: #424242;
-  --gray-900: #212121;
+  /* Neutral Colors - Dark Command Palette */
+  --gray-50: #F9FAFB;
+  --gray-100: #F3F4F6;
+  --gray-200: #E5E7EB;
+  --gray-300: #D1D5DB;
+  --gray-400: #9CA3AF;
+  --gray-500: #6B7280;
+  --gray-600: #4B5563;
+  --gray-700: #374151;
+  --gray-800: #1F2937;
+  --gray-900: #111827;
 
-  /* Semantic Grays */
-  --background: #ffffff;
-  --surface: #ffffff;
-  --surface-variant: #f5f5f5;
-  --surface-hover: #fafafa;
-  --border: #e0e0e0;
-  --border-strong: #bdbdbd;
-  --text-primary: #212121;
-  --text-secondary: #757575;
-  --text-disabled: #bdbdbd;
+  /* Background System - Deep Space Theme */
+  --background: #0A0E27;          /* Deep Space - Main background */
+  --surface: #1A1F3A;             /* Navy Panel - Cards and surfaces */
+  --surface-variant: #252B4A;     /* Elevated Panel */
+  --surface-hover: #2D3454;       /* Hover state */
+  --surface-elevated: #353C5F;    /* Highest elevation */
+
+  /* Border System - Subtle to Strong */
+  --border: rgba(0, 217, 255, 0.2);           /* Cyan tint */
+  --border-strong: rgba(0, 217, 255, 0.4);    /* Stronger cyan */
+  --border-accent: rgba(0, 217, 255, 0.8);    /* Accented borders */
+
+  /* Text System - High Contrast */
+  --text-primary: #F9FAFB;        /* Almost white */
+  --text-secondary: #9CA3AF;      /* Muted gray */
+  --text-disabled: #6B7280;       /* Dimmed */
+  --text-accent: #00D9FF;         /* Electric cyan for highlights */
 
   /* Spacing System - 4px base unit */
   --spacing-0: 0;
@@ -115,13 +143,15 @@
   --spacing-20: 80px;
   --spacing-24: 96px;
 
-  /* Typography */
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
-    'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
-    'Helvetica Neue', sans-serif;
+  /* Typography - Technical Terminal Aesthetic */
+  --font-display: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco',
+    'Courier New', monospace;          /* For headings and emphasis */
 
-  --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono',
-    'Courier New', monospace;
+  --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;                        /* For body text - readable but technical */
+
+  --font-mono: 'Fira Code', 'JetBrains Mono', 'SF Mono', 'Consolas',
+    'Monaco', 'Courier New', monospace; /* For code and task IDs */
 
   /* Font Sizes */
   --text-xs: 11px;
@@ -148,28 +178,50 @@
   --leading-relaxed: 1.625;
   --leading-loose: 2;
 
-  /* Shadows */
+  /* Shadows - Neon Glow Effects */
   --shadow-none: none;
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15), 0 10px 10px rgba(0, 0, 0, 0.04);
-  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.25);
-  --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.06);
-  --shadow-focus: 0 0 0 3px var(--primary-alpha-20);
-  --shadow-primary: 0 4px 14px rgba(0, 82, 204, 0.25);
-  --shadow-success: 0 4px 14px rgba(76, 175, 80, 0.25);
-  --shadow-error: 0 4px 14px rgba(244, 67, 54, 0.25);
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.6);
+  --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.7);
+  --shadow-2xl: 0 24px 48px rgba(0, 0, 0, 0.8);
+  --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.4);
 
-  /* Border Radius */
+  /* Neon Glow Shadows */
+  --shadow-glow-cyan: 0 0 20px rgba(0, 217, 255, 0.5),
+                      0 0 40px rgba(0, 217, 255, 0.3),
+                      0 0 60px rgba(0, 217, 255, 0.1);
+
+  --shadow-glow-green: 0 0 20px rgba(57, 255, 20, 0.5),
+                       0 0 40px rgba(57, 255, 20, 0.3);
+
+  --shadow-glow-red: 0 0 20px rgba(255, 46, 99, 0.5),
+                     0 0 40px rgba(255, 46, 99, 0.3);
+
+  --shadow-glow-purple: 0 0 20px rgba(181, 55, 242, 0.5),
+                        0 0 40px rgba(181, 55, 242, 0.3);
+
+  --shadow-glow-amber: 0 0 20px rgba(255, 184, 0, 0.5),
+                       0 0 40px rgba(255, 184, 0, 0.3);
+
+  /* Focus and State Shadows */
+  --shadow-focus: 0 0 0 2px var(--background),
+                  0 0 0 4px var(--primary-500),
+                  var(--shadow-glow-cyan);
+
+  --shadow-primary: var(--shadow-glow-cyan);
+  --shadow-success: var(--shadow-glow-green);
+  --shadow-error: var(--shadow-glow-red);
+
+  /* Border Radius - Sharp Geometric Edges */
   --radius-none: 0;
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
-  --radius-2xl: 16px;
-  --radius-3xl: 24px;
+  --radius-sm: 2px;               /* Sharper corners */
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
+  --radius-2xl: 12px;
+  --radius-3xl: 16px;
   --radius-full: 9999px;
 
   /* Transitions */
@@ -212,32 +264,50 @@
   --z-notification: 1080;
 }
 
-/* Dark Mode */
+/* ═══════════════════════════════════════════════════════════
+   LIGHT MODE (Alternative - Less common for command centers)
+   ═══════════════════════════════════════════════════════════ */
+:root[data-theme='light'] {
+  /* Light Mode - Inverted Palette */
+  --background: #F9FAFB;          /* Light background */
+  --surface: #FFFFFF;             /* White cards */
+  --surface-variant: #F3F4F6;     /* Light variant */
+  --surface-hover: #E5E7EB;       /* Hover state */
+  --surface-elevated: #FFFFFF;    /* Elevated surfaces */
+
+  /* Light Mode - Borders */
+  --border: rgba(0, 217, 255, 0.3);
+  --border-strong: rgba(0, 217, 255, 0.5);
+  --border-accent: rgba(0, 217, 255, 1);
+
+  /* Light Mode - Text */
+  --text-primary: #111827;
+  --text-secondary: #6B7280;
+  --text-disabled: #9CA3AF;
+  --text-accent: #0088CC;         /* Darker cyan for visibility */
+
+  /* Light Mode - Adjusted Shadows */
+  --shadow-glow-cyan: 0 0 15px rgba(0, 217, 255, 0.3),
+                      0 0 30px rgba(0, 217, 255, 0.15);
+
+  --shadow-glow-green: 0 0 15px rgba(57, 255, 20, 0.3),
+                       0 0 30px rgba(57, 255, 20, 0.15);
+
+  --shadow-glow-red: 0 0 15px rgba(255, 46, 99, 0.3),
+                     0 0 30px rgba(255, 46, 99, 0.15);
+
+  --shadow-glow-purple: 0 0 15px rgba(181, 55, 242, 0.3),
+                        0 0 30px rgba(181, 55, 242, 0.15);
+
+  --shadow-glow-amber: 0 0 15px rgba(255, 184, 0, 0.3),
+                       0 0 30px rgba(255, 184, 0, 0.15);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DARK MODE (Default - Command Center Theme)
+   Note: Dark mode is the primary design, already set in :root
+   ═══════════════════════════════════════════════════════════ */
 :root[data-theme='dark'] {
-  /* Dark Mode - Background Colors */
-  --background: #121212;
-  --surface: #1e1e1e;
-  --surface-variant: #2c2c2c;
-  --surface-hover: #383838;
-  --border: #404040;
-  --border-strong: #525252;
-
-  /* Dark Mode - Text Colors */
-  --text-primary: #ffffff;
-  --text-secondary: #b0b0b0;
-  --text-disabled: #6c6c6c;
-
-  /* Dark Mode - Adjusted Status Colors */
-  --status-na: #b0b0b0;
-  --status-dev: #ffb74d;
-  --status-qa: #66bb6a;
-  --status-uat: #42a5f5;
-  --status-done: #9ccc65;
-  --status-blocked: #ef5350;
-
-  /* Dark Mode - Shadows */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.15);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4), 0 4px 6px rgba(0, 0, 0, 0.2);
-  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.5), 0 10px 10px rgba(0, 0, 0, 0.2);
+  /* Dark mode uses the default :root values */
+  /* No overrides needed - already optimized for dark */
 }

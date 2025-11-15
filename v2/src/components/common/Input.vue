@@ -123,6 +123,10 @@ defineExpose({
 </script>
 
 <style scoped>
+/* ═══════════════════════════════════════════════════════════
+   CYBER INPUT - Terminal Data Entry Field
+   ═══════════════════════════════════════════════════════════ */
+
 .input-wrapper {
   display: flex;
   flex-direction: column;
@@ -130,14 +134,20 @@ defineExpose({
 }
 
 .input-label {
-  font-size: var(--text-sm);
-  font-weight: var(--font-medium);
-  color: var(--text-primary);
+  font-size: var(--text-xs);
+  font-family: var(--font-mono);
+  font-weight: var(--font-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--primary-400);
+  text-shadow: 0 0 5px rgba(0, 217, 255, 0.3);
 }
 
 .required {
   color: var(--error);
-  margin-left: 2px;
+  margin-left: var(--spacing-1);
+  font-size: var(--text-sm);
+  text-shadow: 0 0 5px var(--error-glow);
 }
 
 .input-container {
@@ -146,48 +156,112 @@ defineExpose({
   gap: var(--spacing-2);
   height: 40px;
   padding: 0 var(--spacing-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--surface);
-  transition: var(--transition-all);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Scan line hover effect */
+.input-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 217, 255, 0.1),
+    transparent
+  );
+  transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.input-container:hover:not(.input-disabled)::before {
+  left: 100%;
 }
 
 .input-container:hover:not(.input-disabled) {
-  border-color: var(--border-strong);
+  border-color: rgba(0, 217, 255, 0.5);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.2),
+              inset 0 0 15px rgba(0, 0, 0, 0.5);
 }
 
+/* Focus state - Neon cyan glow */
 .input-focused {
   border-color: var(--primary-500);
-  box-shadow: var(--shadow-focus);
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.4),
+              0 0 30px rgba(0, 217, 255, 0.2),
+              inset 0 0 20px rgba(0, 217, 255, 0.05);
+  background: rgba(0, 217, 255, 0.05);
 }
 
+.input-focused::before {
+  display: none;
+}
+
+/* Terminal cursor effect on focus */
+.input-focused::after {
+  content: '';
+  position: absolute;
+  right: var(--spacing-3);
+  width: 2px;
+  height: 16px;
+  background: var(--primary-500);
+  animation: terminalBlink 1s step-end infinite;
+  box-shadow: 0 0 5px rgba(0, 217, 255, 0.8);
+}
+
+/* Error state - Critical red glow */
 .input-error {
   border-color: var(--error);
+  box-shadow: 0 0 10px var(--error-glow),
+              inset 0 0 10px rgba(255, 46, 99, 0.1);
+  background: rgba(255, 46, 99, 0.05);
 }
 
 .input-error:focus-within {
   border-color: var(--error);
-  box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.2);
+  box-shadow: 0 0 15px var(--error-glow),
+              0 0 30px rgba(255, 46, 99, 0.2),
+              inset 0 0 15px rgba(255, 46, 99, 0.08);
 }
 
+/* Disabled state - Deactivated terminal */
 .input-disabled {
-  background: var(--gray-100);
+  background: rgba(0, 0, 0, 0.5);
+  border-color: var(--border-weak);
   cursor: not-allowed;
-  opacity: 0.6;
+  opacity: 0.5;
+}
+
+.input-disabled::before {
+  display: none;
 }
 
 .input-field {
   flex: 1;
   border: none;
   background: transparent;
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
+  font-family: var(--font-sans);
   color: var(--text-primary);
   outline: none;
   min-width: 0;
+  position: relative;
+  z-index: 2;
 }
 
 .input-field::placeholder {
   color: var(--text-disabled);
+  opacity: 0.6;
 }
 
 .input-field:disabled {
@@ -205,12 +279,22 @@ defineExpose({
   -moz-appearance: textfield;
 }
 
+/* Prefix and Suffix Icons */
 .input-prefix,
 .input-suffix {
   display: flex;
   align-items: center;
-  color: var(--text-secondary);
+  color: var(--primary-400);
   flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 0 3px rgba(0, 217, 255, 0.5));
+}
+
+.input-error .input-prefix,
+.input-error .input-suffix {
+  color: var(--error);
+  filter: drop-shadow(0 0 3px var(--error-glow));
 }
 
 .input-icon {
@@ -218,18 +302,55 @@ defineExpose({
   height: 16px;
 }
 
+/* Helper text - Terminal readout */
 .input-helper {
-  font-size: var(--text-xs);
+  font-size: 10px;
+  font-family: var(--font-mono);
   color: var(--text-secondary);
   margin: 0;
+  padding-left: var(--spacing-1);
+  letter-spacing: 0.03em;
+}
+
+.input-helper::before {
+  content: '> ';
+  color: var(--primary-500);
+  opacity: 0.6;
 }
 
 .helper-error {
   color: var(--error);
+  text-shadow: 0 0 5px var(--error-glow);
 }
 
-/* Dark Mode */
-:root[data-theme='dark'] .input-disabled {
-  background: var(--surface-variant);
+.helper-error::before {
+  content: '! ';
+  color: var(--error);
+  font-weight: var(--font-bold);
+}
+
+/* Light Mode Adjustments */
+:root[data-theme='light'] .input-container {
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme='light'] .input-container:hover:not(.input-disabled) {
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.15),
+              inset 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme='light'] .input-focused {
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.3),
+              inset 0 0 10px rgba(0, 217, 255, 0.05);
+}
+
+:root[data-theme='light'] .input-disabled {
+  background: var(--gray-100);
+  opacity: 0.7;
+}
+
+:root[data-theme='light'] .input-label {
+  text-shadow: none;
 }
 </style>

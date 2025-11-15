@@ -236,16 +236,50 @@ function confirmDelete() {
 </script>
 
 <style scoped>
+/* ═══════════════════════════════════════════════════════════
+   CYBER BATCH TOOLBAR - Mission Control Action Bar
+   ═══════════════════════════════════════════════════════════ */
+
 .batch-toolbar {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   background: var(--surface);
-  border-top: 2px solid var(--primary-500);
-  box-shadow: var(--shadow-xl);
+  border-top: 3px solid var(--primary-500);
+  box-shadow: 0 -4px 20px rgba(0, 217, 255, 0.4),
+              0 -8px 40px rgba(0, 217, 255, 0.2),
+              0 -12px 60px rgba(0, 0, 0, 0.8);
   z-index: 1000;
   padding: var(--spacing-4);
+  backdrop-filter: blur(10px);
+}
+
+/* Neon scan line effect */
+.batch-toolbar::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--primary-500),
+    transparent
+  );
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.8);
+  animation: scanPulse 3s ease-in-out infinite;
+}
+
+@keyframes scanPulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .batch-toolbar__content {
@@ -265,9 +299,19 @@ function confirmDelete() {
 }
 
 .batch-count {
-  font-size: var(--text-base);
-  font-weight: var(--font-semibold);
-  color: var(--primary-600);
+  font-size: var(--text-sm);
+  font-family: var(--font-mono);
+  font-weight: var(--font-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--primary-400);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: rgba(0, 217, 255, 0.1);
+  border: 2px solid var(--primary-500);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 0 12px rgba(0, 217, 255, 0.4),
+              inset 0 0 10px rgba(0, 217, 255, 0.1);
+  text-shadow: 0 0 8px rgba(0, 217, 255, 0.6);
 }
 
 .batch-toolbar__actions {
@@ -279,18 +323,49 @@ function confirmDelete() {
 .modal-footer-actions {
   display: flex;
   justify-content: flex-end;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
 }
 
-/* Transitions */
-.batch-toolbar-enter-active,
+/* Transitions - Slide up with power-on */
+.batch-toolbar-enter-active {
+  animation: toolbarSlideUp 400ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
 .batch-toolbar-leave-active {
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  animation: toolbarSlideDown 300ms cubic-bezier(0.4, 0, 1, 1);
 }
 
-.batch-toolbar-enter-from,
-.batch-toolbar-leave-to {
-  transform: translateY(100%);
-  opacity: 0;
+@keyframes toolbarSlideUp {
+  0% {
+    transform: translateY(100%) scaleY(0.5);
+    opacity: 0;
+    filter: brightness(2);
+  }
+  60% {
+    transform: translateY(-5px) scaleY(1.02);
+    filter: brightness(1.2);
+  }
+  100% {
+    transform: translateY(0) scaleY(1);
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+@keyframes toolbarSlideDown {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+/* Light Mode Adjustments */
+:root[data-theme='light'] .batch-toolbar {
+  box-shadow: 0 -4px 20px rgba(0, 217, 255, 0.3),
+              0 -12px 60px rgba(0, 0, 0, 0.2);
 }
 </style>

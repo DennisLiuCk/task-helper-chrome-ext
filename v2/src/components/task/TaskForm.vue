@@ -387,6 +387,10 @@ function handleClose() {
 </script>
 
 <style scoped>
+/* ═══════════════════════════════════════════════════════════
+   CYBER TASK FORM - Mission Control Data Entry
+   ═══════════════════════════════════════════════════════════ */
+
 .task-form {
   display: flex;
   flex-direction: column;
@@ -410,71 +414,168 @@ function handleClose() {
 }
 
 .form-label {
-  font-size: var(--text-sm);
-  font-weight: var(--font-medium);
-  color: var(--text-primary);
+  font-size: var(--text-xs);
+  font-family: var(--font-mono);
+  font-weight: var(--font-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--primary-400);
+  text-shadow: 0 0 5px rgba(0, 217, 255, 0.3);
 }
 
+/* Select Dropdown - Terminal Selection */
 .form-select {
   width: 100%;
-  padding: var(--spacing-2) var(--spacing-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--background);
+  height: 40px;
+  padding: 0 var(--spacing-3);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.3);
   color: var(--text-primary);
-  font-size: var(--text-base);
-  transition: var(--transition-colors);
+  font-size: var(--text-sm);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.form-select:hover {
+  border-color: rgba(0, 217, 255, 0.5);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.2),
+              inset 0 0 15px rgba(0, 0, 0, 0.5);
 }
 
 .form-select:focus {
   outline: none;
   border-color: var(--primary-500);
-  box-shadow: 0 0 0 3px var(--primary-100);
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.4),
+              0 0 30px rgba(0, 217, 255, 0.2),
+              inset 0 0 20px rgba(0, 217, 255, 0.05);
+  background: rgba(0, 217, 255, 0.05);
 }
 
+.form-select option {
+  background: var(--surface);
+  color: var(--text-primary);
+  padding: var(--spacing-2);
+}
+
+/* Textarea - Terminal Log Input */
 .form-textarea {
   width: 100%;
-  padding: var(--spacing-2) var(--spacing-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--background);
+  padding: var(--spacing-3);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.3);
   color: var(--text-primary);
-  font-size: var(--text-base);
-  font-family: inherit;
+  font-size: var(--text-sm);
+  font-family: var(--font-mono);
+  line-height: 1.6;
   resize: vertical;
-  transition: var(--transition-colors);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.form-textarea::placeholder {
+  color: var(--text-disabled);
+  opacity: 0.6;
+}
+
+.form-textarea:hover {
+  border-color: rgba(0, 217, 255, 0.5);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.2),
+              inset 0 0 15px rgba(0, 0, 0, 0.5);
 }
 
 .form-textarea:focus {
   outline: none;
   border-color: var(--primary-500);
-  box-shadow: 0 0 0 3px var(--primary-100);
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.4),
+              0 0 30px rgba(0, 217, 255, 0.2),
+              inset 0 0 20px rgba(0, 217, 255, 0.05);
+  background: rgba(0, 217, 255, 0.05);
 }
 
+/* Checkbox - Cyber Toggle */
 .form-checkbox {
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
   cursor: pointer;
-  font-size: var(--text-sm);
-  color: var(--text-primary);
+  font-size: var(--text-xs);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  padding: var(--spacing-2) var(--spacing-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.form-checkbox:hover {
+  background: rgba(0, 217, 255, 0.05);
+  border-color: rgba(0, 217, 255, 0.2);
+  color: var(--primary-400);
 }
 
 .form-checkbox input[type="checkbox"] {
+  appearance: none;
   width: 18px;
   height: 18px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-xs);
+  background: rgba(0, 0, 0, 0.3);
   cursor: pointer;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
 }
 
-/* Tags Input */
+.form-checkbox input[type="checkbox"]:hover {
+  border-color: var(--primary-500);
+  box-shadow: 0 0 8px rgba(0, 217, 255, 0.3);
+}
+
+.form-checkbox input[type="checkbox"]:checked {
+  background: var(--primary-500);
+  border-color: var(--primary-500);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.5),
+              inset 0 0 10px rgba(0, 217, 255, 0.3);
+}
+
+.form-checkbox input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--background);
+  font-size: 12px;
+  font-weight: var(--font-bold);
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Tags Input - Terminal Command Interface */
 .tags-input {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-2);
-  padding: var(--spacing-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--background);
+  padding: var(--spacing-3);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tags-input:focus-within {
+  border-color: var(--primary-500);
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.3),
+              inset 0 0 20px rgba(0, 217, 255, 0.05);
+  background: rgba(0, 217, 255, 0.03);
 }
 
 .tags-list {
@@ -489,41 +590,79 @@ function handleClose() {
   background: transparent;
   color: inherit;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: var(--font-bold);
   line-height: 1;
   padding: 0;
   opacity: 0.6;
-  transition: opacity 0.2s;
+  transition: all 0.2s;
 }
 
 .tag-remove:hover {
   opacity: 1;
+  color: var(--error);
+  text-shadow: 0 0 5px var(--error-glow);
+  transform: scale(1.2);
 }
 
 .tag-input-row {
   display: flex;
   gap: var(--spacing-2);
+  align-items: center;
 }
 
 .tag-input {
   flex: 1;
-  padding: var(--spacing-1) var(--spacing-2);
+  padding: var(--spacing-2);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--surface);
+  border-radius: var(--radius-xs);
+  background: rgba(0, 0, 0, 0.4);
   color: var(--text-primary);
   font-size: var(--text-sm);
+  font-family: var(--font-mono);
+  transition: all 0.2s;
+  min-height: 28px;
+}
+
+.tag-input::placeholder {
+  color: var(--text-disabled);
+  opacity: 0.5;
 }
 
 .tag-input:focus {
   outline: none;
   border-color: var(--primary-500);
+  box-shadow: 0 0 8px rgba(0, 217, 255, 0.3);
+  background: rgba(0, 217, 255, 0.05);
 }
 
 /* Modal Footer */
 .modal-footer-actions {
   display: flex;
   justify-content: flex-end;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
+}
+
+/* Light Mode Adjustments */
+:root[data-theme='light'] .form-label {
+  text-shadow: none;
+}
+
+:root[data-theme='light'] .form-select,
+:root[data-theme='light'] .form-textarea,
+:root[data-theme='light'] .tags-input,
+:root[data-theme='light'] .tag-input {
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme='light'] .form-select:focus,
+:root[data-theme='light'] .form-textarea:focus {
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.3),
+              inset 0 0 10px rgba(0, 217, 255, 0.05);
+}
+
+:root[data-theme='light'] .form-checkbox input[type="checkbox"] {
+  background: rgba(255, 255, 255, 0.8);
 }
 </style>

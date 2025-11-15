@@ -306,46 +306,101 @@ defineExpose({
 </script>
 
 <style scoped>
+/* ═══════════════════════════════════════════════════════════
+   CYBER COMMAND PALETTE - Terminal Command Interface
+   ═══════════════════════════════════════════════════════════ */
+
 .command-palette-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: flex-start;
   justify-content: center;
   padding-top: 15vh;
   z-index: 9999;
+  /* Cyber grid overlay */
+  background-image:
+    linear-gradient(rgba(0, 217, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 217, 255, 0.02) 1px, transparent 1px);
+  background-size: 30px 30px;
+  background-color: rgba(0, 0, 0, 0.85);
 }
 
 .command-palette {
   width: 100%;
-  max-width: 600px;
+  max-width: 640px;
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-xl);
+  border: 2px solid var(--primary-500);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 0 30px rgba(0, 217, 255, 0.5),
+              0 0 60px rgba(0, 217, 255, 0.3),
+              inset 0 0 20px rgba(0, 217, 255, 0.05),
+              0 20px 80px rgba(0, 0, 0, 0.8);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   max-height: 70vh;
+  position: relative;
 }
 
-/* Search */
+/* Corner accents */
+.command-palette::before,
+.command-palette::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--primary-500);
+  z-index: 1;
+}
+
+.command-palette::before {
+  top: -2px;
+  left: -2px;
+  border-right: none;
+  border-bottom: none;
+  box-shadow: -2px -2px 10px rgba(0, 217, 255, 0.5);
+}
+
+.command-palette::after {
+  bottom: -2px;
+  right: -2px;
+  border-left: none;
+  border-top: none;
+  box-shadow: 2px 2px 10px rgba(0, 217, 255, 0.5);
+}
+
+/* Search - Terminal Input */
 .command-palette__search {
   display: flex;
   align-items: center;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
   padding: var(--spacing-4);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 2px solid rgba(0, 217, 255, 0.3);
+  background: linear-gradient(180deg, rgba(0, 217, 255, 0.05), transparent);
+  position: relative;
+}
+
+.command-palette__search::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary-500), transparent);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.8);
 }
 
 .search-icon {
   font-size: 20px;
-  color: var(--text-secondary);
+  color: var(--primary-500);
+  filter: drop-shadow(0 0 5px rgba(0, 217, 255, 0.6));
 }
 
 .search-input {
@@ -354,24 +409,32 @@ defineExpose({
   background: transparent;
   color: var(--text-primary);
   font-size: var(--text-lg);
+  font-family: var(--font-mono);
   outline: none;
+  position: relative;
+  z-index: 2;
 }
 
 .search-input::placeholder {
-  color: var(--text-secondary);
+  color: var(--text-disabled);
+  opacity: 0.6;
 }
 
 .search-shortcut {
   padding: var(--spacing-1) var(--spacing-2);
-  background: var(--background);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--primary-500);
+  border-radius: var(--radius-xs);
   font-size: var(--text-xs);
-  color: var(--text-secondary);
+  color: var(--primary-400);
   font-family: var(--font-mono);
+  font-weight: var(--font-bold);
+  box-shadow: 0 0 8px rgba(0, 217, 255, 0.3);
+  position: relative;
+  z-index: 2;
 }
 
-/* Results */
+/* Results - Command Options */
 .command-palette__results {
   overflow-y: auto;
   max-height: 400px;
@@ -383,20 +446,41 @@ defineExpose({
   gap: var(--spacing-3);
   padding: var(--spacing-3) var(--spacing-4);
   cursor: pointer;
-  transition: var(--transition-colors);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   border-left: 3px solid transparent;
+  position: relative;
+}
+
+/* Scan line effect on hover */
+.command-result::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.15), transparent);
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.command-result:hover::before,
+.command-result--selected::before {
+  left: 100%;
 }
 
 .command-result:hover,
 .command-result--selected {
-  background: var(--primary-50);
+  background: rgba(0, 217, 255, 0.1);
   border-left-color: var(--primary-500);
+  box-shadow: inset 0 0 15px rgba(0, 217, 255, 0.1);
 }
 
 .result-icon {
   font-size: 20px;
   width: 24px;
   text-align: center;
+  filter: drop-shadow(0 0 3px rgba(0, 217, 255, 0.5));
 }
 
 .result-content {
@@ -405,8 +489,9 @@ defineExpose({
 }
 
 .result-title {
-  font-size: var(--text-base);
-  font-weight: var(--font-medium);
+  font-size: var(--text-sm);
+  font-family: var(--font-mono);
+  font-weight: var(--font-semibold);
   color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
@@ -414,7 +499,8 @@ defineExpose({
 }
 
 .result-subtitle {
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
+  font-family: var(--font-mono);
   color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
@@ -427,16 +513,17 @@ defineExpose({
 
 .result-shortcut {
   padding: var(--spacing-1) var(--spacing-2);
-  background: var(--background);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: var(--text-xs);
-  color: var(--text-secondary);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 217, 255, 0.3);
+  border-radius: var(--radius-xs);
+  font-size: 10px;
+  color: var(--primary-400);
   font-family: var(--font-mono);
+  font-weight: var(--font-bold);
   flex-shrink: 0;
 }
 
-/* Empty State */
+/* Empty State - Terminal No Results */
 .command-palette__empty {
   padding: var(--spacing-8);
   text-align: center;
@@ -445,43 +532,64 @@ defineExpose({
 
 .empty-icon {
   font-size: 48px;
-  opacity: 0.3;
+  opacity: 0.2;
   margin-bottom: var(--spacing-2);
+  filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.3));
 }
 
 .command-palette__empty p {
   margin: 0;
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
+  font-family: var(--font-mono);
 }
 
-/* Footer */
+/* Footer - Terminal Hints */
 .command-palette__footer {
-  padding: var(--spacing-2) var(--spacing-4);
-  border-top: 1px solid var(--border);
-  background: var(--background);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-top: 2px solid rgba(0, 217, 255, 0.2);
+  background: linear-gradient(0deg, rgba(0, 217, 255, 0.05), transparent);
+  position: relative;
+}
+
+.command-palette__footer::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary-500), transparent);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.6);
 }
 
 .footer-hint {
   display: flex;
   gap: var(--spacing-2);
   align-items: center;
-  font-size: var(--text-xs);
+  font-size: 10px;
+  font-family: var(--font-mono);
   color: var(--text-secondary);
 }
 
 .footer-hint kbd {
-  padding: var(--spacing-1) var(--spacing-2);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  padding: 2px var(--spacing-2);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 217, 255, 0.3);
+  border-radius: var(--radius-xs);
   font-family: var(--font-mono);
-  font-size: var(--text-xs);
+  font-size: 10px;
+  font-weight: var(--font-bold);
+  color: var(--primary-400);
+  box-shadow: 0 0 5px rgba(0, 217, 255, 0.2);
 }
 
-/* Transitions */
-.command-palette-enter-active,
+/* Transitions - Power-On CRT */
+.command-palette-enter-active {
+  transition: opacity 300ms ease;
+}
+
 .command-palette-leave-active {
-  transition: opacity 0.2s ease;
+  transition: opacity 200ms ease;
 }
 
 .command-palette-enter-from,
@@ -489,18 +597,53 @@ defineExpose({
   opacity: 0;
 }
 
-.command-palette-enter-active .command-palette,
+.command-palette-enter-active .command-palette {
+  animation: commandPowerOn 400ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
 .command-palette-leave-active .command-palette {
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  animation: commandPowerOff 250ms cubic-bezier(0.4, 0, 1, 1);
 }
 
-.command-palette-enter-from .command-palette {
-  transform: scale(0.95) translateY(-10px);
-  opacity: 0;
+@keyframes commandPowerOn {
+  0% {
+    transform: scaleY(0.002) translateY(-50px);
+    opacity: 0;
+    filter: brightness(3);
+  }
+  40% {
+    transform: scaleY(0.5) translateY(0);
+    opacity: 1;
+    filter: brightness(1.5);
+  }
+  100% {
+    transform: scaleY(1) translateY(0);
+    opacity: 1;
+    filter: brightness(1);
+  }
 }
 
-.command-palette-leave-to .command-palette {
-  transform: scale(0.95);
-  opacity: 0;
+@keyframes commandPowerOff {
+  0% {
+    transform: scaleY(1);
+    opacity: 1;
+    filter: brightness(1);
+  }
+  100% {
+    transform: scaleY(0.002);
+    opacity: 0;
+    filter: brightness(2);
+  }
+}
+
+/* Light Mode Adjustments */
+:root[data-theme='light'] .command-palette-overlay {
+  background: rgba(249, 250, 251, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+:root[data-theme='light'] .command-palette {
+  box-shadow: 0 0 30px rgba(0, 217, 255, 0.3),
+              0 20px 80px rgba(0, 0, 0, 0.2);
 }
 </style>

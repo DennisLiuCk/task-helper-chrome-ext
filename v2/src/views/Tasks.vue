@@ -244,42 +244,178 @@ async function handleSkipWelcome() {
 </script>
 
 <style scoped>
+/* ═══════════════════════════════════════════════════════════
+   CYBER TASKS VIEW - Mission Control Main Interface
+   ═══════════════════════════════════════════════════════════ */
+
 .tasks {
-  padding: var(--spacing-4);
+  padding: var(--spacing-6) var(--spacing-4);
   padding-bottom: var(--spacing-20);
   min-height: 100vh;
+  position: relative;
 }
 
-/* Header */
+/* Optional: Cyber grid background overlay */
+.tasks::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    linear-gradient(rgba(0, 217, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 217, 255, 0.015) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+.tasks > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Header - Terminal Command Bar */
 .tasks-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--spacing-6);
+  padding: var(--spacing-4);
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(0, 217, 255, 0.3);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.2),
+              inset 0 0 20px rgba(0, 0, 0, 0.5);
   flex-wrap: wrap;
   gap: var(--spacing-4);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Neon underline effect */
+.tasks-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--primary-500),
+    transparent
+  );
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.8);
+  animation: scanPulse 3s ease-in-out infinite;
+}
+
+@keyframes scanPulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .tasks-header__left {
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
+  position: relative;
+  z-index: 1;
 }
 
 .tasks-header__left h1 {
   font-size: var(--text-2xl);
-  font-weight: var(--font-semibold);
-  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-weight: var(--font-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--primary-400);
   margin: 0;
+  text-shadow: 0 0 20px rgba(0, 217, 255, 0.6);
+  position: relative;
+}
+
+/* Terminal prompt indicator */
+.tasks-header__left h1::before {
+  content: '> ';
+  color: var(--primary-500);
+  font-weight: var(--font-bold);
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.8);
+  margin-right: var(--spacing-2);
+}
+
+/* Cursor blink effect */
+.tasks-header__left h1::after {
+  content: '_';
+  color: var(--primary-500);
+  animation: terminalBlink 1s step-end infinite;
+  margin-left: var(--spacing-1);
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.8);
 }
 
 .tasks-header__right {
   display: flex;
   gap: var(--spacing-2);
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
 }
 
-/* Content */
+/* Content Area */
 .tasks-content {
-  /* Task list handles its own styling */
+  animation: contentFadeIn 600ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@keyframes contentFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tasks {
+    padding: var(--spacing-4) var(--spacing-3);
+  }
+
+  .tasks-header {
+    padding: var(--spacing-3);
+  }
+
+  .tasks-header__left h1 {
+    font-size: var(--text-xl);
+  }
+
+  .tasks-header__left h1::before {
+    content: '';
+    margin-right: 0;
+  }
+}
+
+/* Light Mode Adjustments */
+:root[data-theme='light'] .tasks-header {
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.15),
+              inset 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+:root[data-theme='light'] .tasks-header__left h1 {
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+}
+
+:root[data-theme='light'] .tasks::before {
+  opacity: 0.3;
 }
 </style>

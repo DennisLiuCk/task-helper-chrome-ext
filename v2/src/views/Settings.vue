@@ -374,55 +374,192 @@ function applyTheme() {
 </script>
 
 <style scoped>
+/* ═══════════════════════════════════════════════════════════
+   CYBER SETTINGS VIEW - Configuration Command Center
+   ═══════════════════════════════════════════════════════════ */
+
 .settings {
-  padding: var(--spacing-4);
+  padding: var(--spacing-6) var(--spacing-4);
   max-width: 900px;
   margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
 }
 
+/* Optional: Cyber grid background overlay */
+.settings::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    linear-gradient(rgba(0, 217, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 217, 255, 0.015) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+.settings > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Header - Terminal Command Bar */
 .settings-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--spacing-6);
+  padding: var(--spacing-4);
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(0, 217, 255, 0.3);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.2),
+              inset 0 0 20px rgba(0, 0, 0, 0.5);
   flex-wrap: wrap;
   gap: var(--spacing-4);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Neon underline effect */
+.settings-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--primary-500),
+    transparent
+  );
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.8);
+  animation: scanPulse 3s ease-in-out infinite;
+}
+
+@keyframes scanPulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .settings-header h1 {
   font-size: var(--text-2xl);
-  font-weight: var(--font-semibold);
-  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-weight: var(--font-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--primary-400);
   margin: 0;
+  text-shadow: 0 0 20px rgba(0, 217, 255, 0.6);
+  position: relative;
+  z-index: 1;
+}
+
+/* Terminal prompt indicator */
+.settings-header h1::before {
+  content: '$ ';
+  color: var(--primary-500);
+  font-weight: var(--font-bold);
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.8);
+  margin-right: var(--spacing-2);
 }
 
 .settings-header__actions {
   display: flex;
   gap: var(--spacing-2);
+  position: relative;
+  z-index: 1;
 }
 
+/* Content Area */
 .settings-content {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-6);
+  animation: contentFadeIn 600ms cubic-bezier(0.65, 0, 0.35, 1);
 }
 
+@keyframes contentFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Section - Terminal Panel */
 .settings-section {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(0, 217, 255, 0.2);
+  border-radius: var(--radius-sm);
   padding: var(--spacing-6);
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.1),
+              inset 0 0 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
+.settings-section:hover {
+  border-color: rgba(0, 217, 255, 0.3);
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.15),
+              inset 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Section Title - Terminal Header */
 .section-title {
-  font-size: var(--text-lg);
-  font-weight: var(--font-semibold);
-  color: var(--text-primary);
+  font-size: var(--text-base);
+  font-family: var(--font-mono);
+  font-weight: var(--font-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--primary-400);
   margin: 0 0 var(--spacing-4) 0;
   padding-bottom: var(--spacing-3);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 2px solid transparent;
+  position: relative;
 }
 
+/* Terminal prompt indicator */
+.section-title::before {
+  content: '# ';
+  color: var(--primary-500);
+  font-weight: var(--font-bold);
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.8);
+  margin-right: var(--spacing-2);
+}
+
+/* Neon divider */
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--primary-500),
+    transparent
+  );
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.6);
+}
+
+/* Settings Grid */
 .settings-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -439,44 +576,83 @@ function applyTheme() {
   grid-column: 1 / -1;
 }
 
+/* Setting Label - Monospace */
 .setting-label {
-  font-size: var(--text-sm);
-  font-weight: var(--font-medium);
-  color: var(--text-primary);
+  font-size: var(--text-xs);
+  font-family: var(--font-mono);
+  font-weight: var(--font-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
 }
 
+/* Select - Terminal Dropdown */
 .setting-select {
   padding: var(--spacing-2) var(--spacing-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--background);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.3);
   color: var(--text-primary);
   font-size: var(--text-sm);
+  font-family: var(--font-mono);
   cursor: pointer;
-  transition: var(--transition-colors);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+  position: relative;
 }
 
+/* Scan line hover effect */
 .setting-select:hover {
   border-color: var(--primary-400);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.2),
+              inset 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
+/* Neon focus glow */
 .setting-select:focus {
   outline: none;
   border-color: var(--primary-500);
-  box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.1);
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.4),
+              0 0 30px rgba(0, 217, 255, 0.2),
+              inset 0 0 20px rgba(0, 217, 255, 0.05);
+  background: rgba(0, 217, 255, 0.05);
 }
 
+/* Color Picker - Neon Container */
 .setting-color-picker {
   width: 60px;
   height: 36px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3),
+              inset 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
+.setting-color-picker:hover {
+  border-color: var(--primary-400);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.3),
+              inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.setting-color-picker:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.4);
+}
+
+/* Checkbox Items */
 .checkbox-item {
   flex-direction: row;
   align-items: center;
+  padding: var(--spacing-2);
+  border-radius: var(--radius-xs);
+  transition: all 0.2s;
+}
+
+.checkbox-item:hover {
+  background: rgba(0, 217, 255, 0.03);
 }
 
 .checkbox-label {
@@ -485,13 +661,55 @@ function applyTheme() {
   gap: var(--spacing-2);
   cursor: pointer;
   font-size: var(--text-sm);
+  font-family: var(--font-mono);
   color: var(--text-primary);
 }
 
+/* Custom Checkbox - Cyber Style */
 .setting-checkbox {
+  appearance: none;
   width: 18px;
   height: 18px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-xs);
+  background: rgba(0, 0, 0, 0.3);
   cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.setting-checkbox:hover {
+  border-color: var(--primary-400);
+  box-shadow: 0 0 8px rgba(0, 217, 255, 0.2),
+              inset 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.setting-checkbox:checked {
+  background: var(--primary-500);
+  border-color: var(--primary-500);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.5),
+              inset 0 0 10px rgba(0, 217, 255, 0.3);
+}
+
+.setting-checkbox:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--background);
+  font-size: 12px;
+  font-weight: var(--font-bold);
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.setting-checkbox:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 12px rgba(0, 217, 255, 0.4),
+              inset 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 /* Services List */
@@ -505,6 +723,39 @@ function applyTheme() {
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-xs);
+  transition: all 0.2s;
+  position: relative;
+}
+
+/* Scan line hover effect */
+.service-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 217, 255, 0.1),
+    transparent
+  );
+  transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: var(--radius-xs);
+}
+
+.service-item:hover::before {
+  left: 100%;
+}
+
+.service-item:hover {
+  border-color: rgba(0, 217, 255, 0.3);
+  background: rgba(0, 217, 255, 0.05);
 }
 
 .service-color {
@@ -513,5 +764,52 @@ function applyTheme() {
 
 .service-name {
   flex: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .settings {
+    padding: var(--spacing-4) var(--spacing-3);
+  }
+
+  .settings-header {
+    padding: var(--spacing-3);
+  }
+
+  .settings-header h1 {
+    font-size: var(--text-xl);
+  }
+
+  .settings-section {
+    padding: var(--spacing-4);
+  }
+
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Light Mode Adjustments */
+:root[data-theme='light'] .settings-header {
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.15),
+              inset 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+:root[data-theme='light'] .settings-header h1 {
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+}
+
+:root[data-theme='light'] .settings-section {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+:root[data-theme='light'] .settings::before {
+  opacity: 0.3;
+}
+
+:root[data-theme='light'] .setting-select,
+:root[data-theme='light'] .setting-checkbox {
+  background: rgba(255, 255, 255, 0.5);
 }
 </style>

@@ -1,102 +1,114 @@
 :root {
   /* ═══════════════════════════════════════════════════════════
-     CYBER COMMAND CENTER - Design System
-     Theme: Terminal Cyberpunk meets Swiss Precision
+     MODERN PROFESSIONAL - Design System
+     Theme: Apple meets Anthropic - Refined & Sophisticated
      ═══════════════════════════════════════════════════════════ */
 
-  /* Primary Accent - Electric Cyan */
-  --primary-50: #e0f9ff;
-  --primary-100: #b3efff;
-  --primary-200: #80e5ff;
-  --primary-300: #4ddbff;
-  --primary-400: #26d4ff;
-  --primary-500: #00D9FF;  /* Electric Cyan - Main */
-  --primary-600: #00c2e6;
-  --primary-700: #00a3bf;
-  --primary-800: #008599;
-  --primary-900: #005966;
+  /* Primary - Sophisticated Gradient (Purple to Blue) */
+  --primary-50: #f5f3ff;
+  --primary-100: #ede9fe;
+  --primary-200: #ddd6fe;
+  --primary-300: #c4b5fd;
+  --primary-400: #a78bfa;
+  --primary-500: #8b5cf6;  /* Refined Purple - Main */
+  --primary-600: #7c3aed;
+  --primary-700: #6d28d9;
+  --primary-800: #5b21b6;
+  --primary-900: #4c1d95;
 
   /* Primary with opacity */
-  --primary-alpha-10: rgba(0, 217, 255, 0.1);
-  --primary-alpha-20: rgba(0, 217, 255, 0.2);
-  --primary-alpha-50: rgba(0, 217, 255, 0.5);
+  --primary-alpha-10: rgba(139, 92, 246, 0.1);
+  --primary-alpha-20: rgba(139, 92, 246, 0.2);
+  --primary-alpha-50: rgba(139, 92, 246, 0.5);
 
-  /* Status Colors - Neon Terminal Palette */
-  --status-na: #6B7280;           /* Gray Idle */
-  --status-na-bg: rgba(107, 114, 128, 0.15);
+  /* Accent - Warm Gradient (Anthropic-inspired) */
+  --accent-50: #fff7ed;
+  --accent-100: #ffedd5;
+  --accent-200: #fed7aa;
+  --accent-300: #fdba74;
+  --accent-400: #fb923c;
+  --accent-500: #f97316;  /* Warm Orange - Main */
+  --accent-600: #ea580c;
+  --accent-700: #c2410c;
+  --accent-800: #9a3412;
+  --accent-900: #7c2d12;
+
+  /* Status Colors - Professional Palette */
+  --status-na: #6B7280;           /* Neutral Gray */
+  --status-na-bg: #F3F4F6;
   --status-na-hover: #9CA3AF;
-  --status-na-glow: rgba(107, 114, 128, 0.4);
+  --status-na-border: #E5E7EB;
 
-  --status-dev: #FFB800;          /* Amber Alert - In Progress */
-  --status-dev-bg: rgba(255, 184, 0, 0.15);
-  --status-dev-hover: #FFC933;
-  --status-dev-glow: rgba(255, 184, 0, 0.6);
+  --status-dev: #F59E0B;          /* Amber - In Progress */
+  --status-dev-bg: #FEF3C7;
+  --status-dev-hover: #FBBF24;
+  --status-dev-border: #FDE68A;
 
-  --status-qa: #39FF14;           /* Neon Green - Testing */
-  --status-qa-bg: rgba(57, 255, 20, 0.15);
-  --status-qa-hover: #5AFF47;
-  --status-qa-glow: rgba(57, 255, 20, 0.6);
+  --status-qa: #10B981;           /* Emerald - Testing */
+  --status-qa-bg: #D1FAE5;
+  --status-qa-hover: #34D399;
+  --status-qa-border: #A7F3D0;
 
-  --status-uat: #B537F2;          /* Cyber Purple - Staging */
-  --status-uat-bg: rgba(181, 55, 242, 0.15);
-  --status-uat-hover: #C554FF;
-  --status-uat-glow: rgba(181, 55, 242, 0.6);
+  --status-uat: #8B5CF6;          /* Purple - Staging */
+  --status-uat-bg: #EDE9FE;
+  --status-uat-hover: #A78BFA;
+  --status-uat-border: #DDD6FE;
 
-  --status-done: #00D9FF;         /* Electric Cyan - Complete */
-  --status-done-bg: rgba(0, 217, 255, 0.15);
-  --status-done-hover: #26E3FF;
-  --status-done-glow: rgba(0, 217, 255, 0.6);
+  --status-done: #3B82F6;         /* Blue - Complete */
+  --status-done-bg: #DBEAFE;
+  --status-done-hover: #60A5FA;
+  --status-done-border: #BFDBFE;
 
-  --status-blocked: #FF2E63;      /* Critical Red - Blocked */
-  --status-blocked-bg: rgba(255, 46, 99, 0.15);
-  --status-blocked-hover: #FF5282;
-  --status-blocked-glow: rgba(255, 46, 99, 0.6);
+  --status-blocked: #EF4444;      /* Red - Blocked */
+  --status-blocked-bg: #FEE2E2;
+  --status-blocked-hover: #F87171;
+  --status-blocked-border: #FECACA;
 
-  /* Service Colors - Vibrant Neon Palette */
-  --service-product: #B537F2;     /* Cyber Purple */
-  --service-product-bg: rgba(181, 55, 242, 0.15);
-  --service-product-glow: rgba(181, 55, 242, 0.5);
+  /* Service Colors - Professional Palette */
+  --service-product: #8B5CF6;     /* Purple */
+  --service-product-bg: #EDE9FE;
+  --service-product-border: #DDD6FE;
 
-  --service-store: #FF2E63;       /* Hot Pink */
-  --service-store-bg: rgba(255, 46, 99, 0.15);
-  --service-store-glow: rgba(255, 46, 99, 0.5);
+  --service-store: #EC4899;       /* Pink */
+  --service-store-bg: #FCE7F3;
+  --service-store-border: #FBCFE8;
 
-  --service-gateway: #00D9FF;     /* Electric Cyan */
-  --service-gateway-bg: rgba(0, 217, 255, 0.15);
-  --service-gateway-glow: rgba(0, 217, 255, 0.5);
+  --service-gateway: #06B6D4;     /* Cyan */
+  --service-gateway-bg: #CFFAFE;
+  --service-gateway-border: #A5F3FC;
 
-  --service-backend: #FF6B35;     /* Neon Orange */
-  --service-backend-bg: rgba(255, 107, 53, 0.15);
-  --service-backend-glow: rgba(255, 107, 53, 0.5);
+  --service-backend: #F97316;     /* Orange */
+  --service-backend-bg: #FFEDD5;
+  --service-backend-border: #FED7AA;
 
-  --service-frontend: #00D9FF;    /* Electric Cyan */
-  --service-frontend-bg: rgba(0, 217, 255, 0.15);
-  --service-frontend-glow: rgba(0, 217, 255, 0.5);
+  --service-frontend: #3B82F6;    /* Blue */
+  --service-frontend-bg: #DBEAFE;
+  --service-frontend-border: #BFDBFE;
 
-  --service-others: #6B7280;      /* Neutral Gray */
-  --service-others-bg: rgba(107, 114, 128, 0.15);
-  --service-others-glow: rgba(107, 114, 128, 0.5);
+  --service-others: #6B7280;      /* Gray */
+  --service-others-bg: #F3F4F6;
+  --service-others-border: #E5E7EB;
 
-  /* Semantic Colors - High Contrast Alerts */
-  --success: #39FF14;             /* Neon Green */
-  --success-bg: rgba(57, 255, 20, 0.15);
-  --success-hover: #5AFF47;
-  --success-glow: rgba(57, 255, 20, 0.6);
+  /* Semantic Colors - Refined Alerts */
+  --success: #10B981;             /* Emerald */
+  --success-bg: #D1FAE5;
+  --success-hover: #34D399;
+  --success-border: #A7F3D0;
 
-  --warning: #FFB800;             /* Amber Alert */
-  --warning-bg: rgba(255, 184, 0, 0.15);
-  --warning-hover: #FFC933;
-  --warning-glow: rgba(255, 184, 0, 0.6);
+  --warning: #F59E0B;             /* Amber */
+  --warning-bg: #FEF3C7;
+  --warning-hover: #FBBF24;
+  --warning-border: #FDE68A;
 
-  --error: #FF2E63;               /* Critical Red */
-  --error-bg: rgba(255, 46, 99, 0.15);
-  --error-hover: #FF5282;
-  --error-glow: rgba(255, 46, 99, 0.6);
+  --error: #EF4444;               /* Red */
+  --error-bg: #FEE2E2;
+  --error-hover: #F87171;
+  --error-border: #FECACA;
 
-  --info: #00D9FF;                /* Electric Cyan */
-  --info-bg: rgba(0, 217, 255, 0.15);
-  --info-hover: #26E3FF;
-  --info-glow: rgba(0, 217, 255, 0.6);
+  --info: #3B82F6;                /* Blue */
+  --info-bg: #DBEAFE;
+  --info-hover: #60A5FA;
+  --info-border: #BFDBFE;
 
   /* Neutral Colors - Dark Command Palette */
   --gray-50: #F9FAFB;
@@ -110,23 +122,23 @@
   --gray-800: #1F2937;
   --gray-900: #111827;
 
-  /* Background System - Deep Space Theme */
-  --background: #0A0E27;          /* Deep Space - Main background */
-  --surface: #1A1F3A;             /* Navy Panel - Cards and surfaces */
-  --surface-variant: #252B4A;     /* Elevated Panel */
-  --surface-hover: #2D3454;       /* Hover state */
-  --surface-elevated: #353C5F;    /* Highest elevation */
+  /* Background System - Clean Modern */
+  --background: #FFFFFF;          /* Pure White - Main background */
+  --surface: #FFFFFF;             /* White - Cards and surfaces */
+  --surface-variant: #F9FAFB;     /* Off-white variant */
+  --surface-hover: #F3F4F6;       /* Hover state */
+  --surface-elevated: #FFFFFF;    /* Elevated surfaces with shadow */
 
-  /* Border System - Subtle to Strong */
-  --border: rgba(0, 217, 255, 0.2);           /* Cyan tint */
-  --border-strong: rgba(0, 217, 255, 0.4);    /* Stronger cyan */
-  --border-accent: rgba(0, 217, 255, 0.8);    /* Accented borders */
+  /* Border System - Subtle & Refined */
+  --border: #E5E7EB;              /* Light gray */
+  --border-strong: #D1D5DB;       /* Medium gray */
+  --border-accent: #8B5CF6;       /* Purple accent */
 
-  /* Text System - High Contrast */
-  --text-primary: #F9FAFB;        /* Almost white */
-  --text-secondary: #9CA3AF;      /* Muted gray */
-  --text-disabled: #6B7280;       /* Dimmed */
-  --text-accent: #00D9FF;         /* Electric cyan for highlights */
+  /* Text System - Clear Hierarchy */
+  --text-primary: #111827;        /* Near black */
+  --text-secondary: #6B7280;      /* Medium gray */
+  --text-disabled: #9CA3AF;       /* Light gray */
+  --text-accent: #8B5CF6;         /* Purple for highlights */
 
   /* Spacing System - 4px base unit */
   --spacing-0: 0;
@@ -143,15 +155,15 @@
   --spacing-20: 80px;
   --spacing-24: 96px;
 
-  /* Typography - Technical Terminal Aesthetic */
-  --font-display: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco',
-    'Courier New', monospace;          /* For headings and emphasis */
+  /* Typography - Modern Professional */
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display',
+    'Segoe UI', sans-serif;           /* For headings - clean and modern */
 
-  --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    sans-serif;                        /* For body text - readable but technical */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text',
+    'Segoe UI', 'Roboto', sans-serif; /* For body text - highly readable */
 
-  --font-mono: 'Fira Code', 'JetBrains Mono', 'SF Mono', 'Consolas',
-    'Monaco', 'Courier New', monospace; /* For code and task IDs */
+  --font-mono: 'SF Mono', 'Monaco', 'Cascadia Code', 'Consolas',
+    'Courier New', monospace;         /* Only for task IDs and code */
 
   /* Font Sizes */
   --text-xs: 11px;
@@ -178,50 +190,40 @@
   --leading-relaxed: 1.625;
   --leading-loose: 2;
 
-  /* Shadows - Neon Glow Effects */
+  /* Shadows - Soft & Subtle (Apple-style) */
   --shadow-none: none;
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.6);
-  --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.7);
-  --shadow-2xl: 0 24px 48px rgba(0, 0, 0, 0.8);
-  --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
 
-  /* Neon Glow Shadows */
-  --shadow-glow-cyan: 0 0 20px rgba(0, 217, 255, 0.5),
-                      0 0 40px rgba(0, 217, 255, 0.3),
-                      0 0 60px rgba(0, 217, 255, 0.1);
+  /* Colored Shadows - Subtle Accents */
+  --shadow-purple: 0 4px 6px -1px rgba(139, 92, 246, 0.1), 0 2px 4px -1px rgba(139, 92, 246, 0.06);
+  --shadow-blue: 0 4px 6px -1px rgba(59, 130, 246, 0.1), 0 2px 4px -1px rgba(59, 130, 246, 0.06);
+  --shadow-green: 0 4px 6px -1px rgba(16, 185, 129, 0.1), 0 2px 4px -1px rgba(16, 185, 129, 0.06);
+  --shadow-orange: 0 4px 6px -1px rgba(249, 115, 22, 0.1), 0 2px 4px -1px rgba(249, 115, 22, 0.06);
+  --shadow-red: 0 4px 6px -1px rgba(239, 68, 68, 0.1), 0 2px 4px -1px rgba(239, 68, 68, 0.06);
 
-  --shadow-glow-green: 0 0 20px rgba(57, 255, 20, 0.5),
-                       0 0 40px rgba(57, 255, 20, 0.3);
+  /* Focus Ring - Apple-style */
+  --shadow-focus: 0 0 0 3px rgba(139, 92, 246, 0.1),
+                  0 0 0 4px rgba(139, 92, 246, 0.2);
 
-  --shadow-glow-red: 0 0 20px rgba(255, 46, 99, 0.5),
-                     0 0 40px rgba(255, 46, 99, 0.3);
+  --shadow-primary: var(--shadow-purple);
+  --shadow-success: var(--shadow-green);
+  --shadow-error: var(--shadow-red);
 
-  --shadow-glow-purple: 0 0 20px rgba(181, 55, 242, 0.5),
-                        0 0 40px rgba(181, 55, 242, 0.3);
-
-  --shadow-glow-amber: 0 0 20px rgba(255, 184, 0, 0.5),
-                       0 0 40px rgba(255, 184, 0, 0.3);
-
-  /* Focus and State Shadows */
-  --shadow-focus: 0 0 0 2px var(--background),
-                  0 0 0 4px var(--primary-500),
-                  var(--shadow-glow-cyan);
-
-  --shadow-primary: var(--shadow-glow-cyan);
-  --shadow-success: var(--shadow-glow-green);
-  --shadow-error: var(--shadow-glow-red);
-
-  /* Border Radius - Sharp Geometric Edges */
+  /* Border Radius - Rounded & Smooth (Apple-style) */
   --radius-none: 0;
-  --radius-sm: 2px;               /* Sharper corners */
-  --radius-md: 4px;
-  --radius-lg: 6px;
-  --radius-xl: 8px;
-  --radius-2xl: 12px;
-  --radius-3xl: 16px;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-3xl: 32px;
   --radius-full: 9999px;
 
   /* Transitions */
@@ -265,49 +267,47 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   LIGHT MODE (Alternative - Less common for command centers)
+   LIGHT MODE (Default - Modern Professional Theme)
+   Note: Light mode is the primary design, already set in :root
    ═══════════════════════════════════════════════════════════ */
 :root[data-theme='light'] {
-  /* Light Mode - Inverted Palette */
-  --background: #F9FAFB;          /* Light background */
-  --surface: #FFFFFF;             /* White cards */
-  --surface-variant: #F3F4F6;     /* Light variant */
-  --surface-hover: #E5E7EB;       /* Hover state */
-  --surface-elevated: #FFFFFF;    /* Elevated surfaces */
-
-  /* Light Mode - Borders */
-  --border: rgba(0, 217, 255, 0.3);
-  --border-strong: rgba(0, 217, 255, 0.5);
-  --border-accent: rgba(0, 217, 255, 1);
-
-  /* Light Mode - Text */
-  --text-primary: #111827;
-  --text-secondary: #6B7280;
-  --text-disabled: #9CA3AF;
-  --text-accent: #0088CC;         /* Darker cyan for visibility */
-
-  /* Light Mode - Adjusted Shadows */
-  --shadow-glow-cyan: 0 0 15px rgba(0, 217, 255, 0.3),
-                      0 0 30px rgba(0, 217, 255, 0.15);
-
-  --shadow-glow-green: 0 0 15px rgba(57, 255, 20, 0.3),
-                       0 0 30px rgba(57, 255, 20, 0.15);
-
-  --shadow-glow-red: 0 0 15px rgba(255, 46, 99, 0.3),
-                     0 0 30px rgba(255, 46, 99, 0.15);
-
-  --shadow-glow-purple: 0 0 15px rgba(181, 55, 242, 0.3),
-                        0 0 30px rgba(181, 55, 242, 0.15);
-
-  --shadow-glow-amber: 0 0 15px rgba(255, 184, 0, 0.3),
-                       0 0 30px rgba(255, 184, 0, 0.15);
+  /* Light mode uses the default :root values */
+  /* No overrides needed - already optimized for light */
 }
 
 /* ═══════════════════════════════════════════════════════════
-   DARK MODE (Default - Command Center Theme)
-   Note: Dark mode is the primary design, already set in :root
+   DARK MODE (Alternative - For those who prefer dark)
    ═══════════════════════════════════════════════════════════ */
 :root[data-theme='dark'] {
-  /* Dark mode uses the default :root values */
-  /* No overrides needed - already optimized for dark */
+  /* Dark Mode - Professional Night Theme */
+  --background: #0F172A;          /* Slate 900 */
+  --surface: #1E293B;             /* Slate 800 */
+  --surface-variant: #334155;     /* Slate 700 */
+  --surface-hover: #475569;       /* Slate 600 */
+  --surface-elevated: #1E293B;    /* Slate 800 with shadow */
+
+  /* Dark Mode - Borders */
+  --border: #334155;              /* Slate 700 */
+  --border-strong: #475569;       /* Slate 600 */
+  --border-accent: #A78BFA;       /* Purple 400 */
+
+  /* Dark Mode - Text */
+  --text-primary: #F8FAFC;        /* Slate 50 */
+  --text-secondary: #94A3B8;      /* Slate 400 */
+  --text-disabled: #64748B;       /* Slate 500 */
+  --text-accent: #A78BFA;         /* Purple 400 */
+
+  /* Dark Mode - Adjusted Status Colors */
+  --status-na-bg: rgba(107, 114, 128, 0.2);
+  --status-dev-bg: rgba(245, 158, 11, 0.2);
+  --status-qa-bg: rgba(16, 185, 129, 0.2);
+  --status-uat-bg: rgba(139, 92, 246, 0.2);
+  --status-done-bg: rgba(59, 130, 246, 0.2);
+  --status-blocked-bg: rgba(239, 68, 68, 0.2);
+
+  /* Dark Mode - Adjusted Semantic Colors */
+  --success-bg: rgba(16, 185, 129, 0.2);
+  --warning-bg: rgba(245, 158, 11, 0.2);
+  --error-bg: rgba(239, 68, 68, 0.2);
+  --info-bg: rgba(59, 130, 246, 0.2);
 }

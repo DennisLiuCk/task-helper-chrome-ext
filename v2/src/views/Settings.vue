@@ -183,11 +183,12 @@
               class="service-name"
             />
             <Button variant="ghost" size="sm" @click="removeService(index)">
-              🗑️
+              <Icon name="trash" size="sm" />
             </Button>
           </div>
           <Button variant="secondary" size="sm" @click="addService">
-            ➕ 新增服務
+            <Icon name="plus" size="sm" />
+            新增服務
           </Button>
         </div>
       </section>
@@ -301,6 +302,7 @@ import { useSettingsStore } from '@/stores/settings';
 import type { Settings, Service } from '@/types/settings';
 import Button from '@/components/common/Button.vue';
 import Input from '@/components/common/Input.vue';
+import Icon from '@/components/common/Icon.vue';
 import ToastContainer from '@/components/common/ToastContainer.vue';
 import { useToast } from '@/composables/useToast';
 
@@ -375,7 +377,7 @@ function applyTheme() {
 
 <style scoped>
 /* ═══════════════════════════════════════════════════════════
-   CYBER SETTINGS VIEW - Configuration Command Center
+   MODERN SETTINGS VIEW - Clean Professional Configuration
    ═══════════════════════════════════════════════════════════ */
 
 .settings {
@@ -383,103 +385,30 @@ function applyTheme() {
   max-width: 900px;
   margin: 0 auto;
   min-height: 100vh;
-  position: relative;
 }
 
-/* Optional: Cyber grid background overlay */
-.settings::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image:
-    linear-gradient(rgba(0, 217, 255, 0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 217, 255, 0.015) 1px, transparent 1px);
-  background-size: 50px 50px;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.5;
-}
-
-.settings > * {
-  position: relative;
-  z-index: 1;
-}
-
-/* Header - Terminal Command Bar */
+/* Header */
 .settings-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--spacing-6);
-  padding: var(--spacing-4);
-  background: rgba(0, 0, 0, 0.2);
-  border: 2px solid rgba(0, 217, 255, 0.3);
-  border-radius: var(--radius-sm);
-  box-shadow: 0 0 20px rgba(0, 217, 255, 0.2),
-              inset 0 0 20px rgba(0, 0, 0, 0.5);
   flex-wrap: wrap;
   gap: var(--spacing-4);
-  position: relative;
-  overflow: hidden;
-}
-
-/* Neon underline effect */
-.settings-header::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--primary-500),
-    transparent
-  );
-  box-shadow: 0 0 15px rgba(0, 217, 255, 0.8);
-  animation: scanPulse 3s ease-in-out infinite;
-}
-
-@keyframes scanPulse {
-  0%, 100% {
-    opacity: 0.6;
-  }
-  50% {
-    opacity: 1;
-  }
 }
 
 .settings-header h1 {
-  font-size: var(--text-2xl);
+  font-size: var(--text-3xl);
   font-family: var(--font-display);
   font-weight: var(--font-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--primary-400);
+  color: var(--text-primary);
   margin: 0;
-  text-shadow: 0 0 20px rgba(0, 217, 255, 0.6);
-  position: relative;
-  z-index: 1;
-}
-
-/* Terminal prompt indicator */
-.settings-header h1::before {
-  content: '$ ';
-  color: var(--primary-500);
-  font-weight: var(--font-bold);
-  text-shadow: 0 0 10px rgba(0, 217, 255, 0.8);
-  margin-right: var(--spacing-2);
+  letter-spacing: -0.02em;
 }
 
 .settings-header__actions {
   display: flex;
   gap: var(--spacing-2);
-  position: relative;
-  z-index: 1;
 }
 
 /* Content Area */
@@ -487,13 +416,13 @@ function applyTheme() {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-6);
-  animation: contentFadeIn 600ms cubic-bezier(0.65, 0, 0.35, 1);
+  animation: contentFadeIn 400ms var(--ease-out);
 }
 
 @keyframes contentFadeIn {
   0% {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(10px);
   }
   100% {
     opacity: 1;
@@ -501,62 +430,29 @@ function applyTheme() {
   }
 }
 
-/* Section - Terminal Panel */
+/* Section */
 .settings-section {
-  background: rgba(0, 0, 0, 0.2);
-  border: 2px solid rgba(0, 217, 255, 0.2);
-  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
   padding: var(--spacing-6);
-  box-shadow: 0 0 15px rgba(0, 217, 255, 0.1),
-              inset 0 0 15px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.2s var(--ease-out);
 }
 
 .settings-section:hover {
-  border-color: rgba(0, 217, 255, 0.3);
-  box-shadow: 0 0 20px rgba(0, 217, 255, 0.15),
-              inset 0 0 15px rgba(0, 0, 0, 0.3);
+  border-color: var(--border-strong);
 }
 
-/* Section Title - Terminal Header */
+/* Section Title */
 .section-title {
-  font-size: var(--text-base);
-  font-family: var(--font-mono);
-  font-weight: var(--font-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--primary-400);
+  font-size: var(--text-lg);
+  font-family: var(--font-display);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
   margin: 0 0 var(--spacing-4) 0;
   padding-bottom: var(--spacing-3);
-  border-bottom: 2px solid transparent;
-  position: relative;
-}
-
-/* Terminal prompt indicator */
-.section-title::before {
-  content: '# ';
-  color: var(--primary-500);
-  font-weight: var(--font-bold);
-  text-shadow: 0 0 10px rgba(0, 217, 255, 0.8);
-  margin-right: var(--spacing-2);
-}
-
-/* Neon divider */
-.section-title::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--primary-500),
-    transparent
-  );
-  box-shadow: 0 0 10px rgba(0, 217, 255, 0.6);
+  border-bottom: 1px solid var(--border);
 }
 
 /* Settings Grid */
@@ -576,70 +472,55 @@ function applyTheme() {
   grid-column: 1 / -1;
 }
 
-/* Setting Label - Monospace */
+/* Setting Label */
 .setting-label {
-  font-size: var(--text-xs);
-  font-family: var(--font-mono);
-  font-weight: var(--font-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-size: var(--text-sm);
+  font-family: var(--font-sans);
+  font-weight: var(--font-medium);
   color: var(--text-secondary);
 }
 
-/* Select - Terminal Dropdown */
+/* Select */
 .setting-select {
   padding: var(--spacing-2) var(--spacing-3);
-  border: 2px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
   color: var(--text-primary);
   font-size: var(--text-sm);
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
-  position: relative;
+  transition: all 0.2s var(--ease-out);
 }
 
-/* Scan line hover effect */
 .setting-select:hover {
-  border-color: var(--primary-400);
-  box-shadow: 0 0 10px rgba(0, 217, 255, 0.2),
-              inset 0 0 10px rgba(0, 0, 0, 0.5);
+  border-color: var(--border-strong);
 }
 
-/* Neon focus glow */
 .setting-select:focus {
   outline: none;
   border-color: var(--primary-500);
-  box-shadow: 0 0 15px rgba(0, 217, 255, 0.4),
-              0 0 30px rgba(0, 217, 255, 0.2),
-              inset 0 0 20px rgba(0, 217, 255, 0.05);
-  background: rgba(0, 217, 255, 0.05);
+  box-shadow: var(--shadow-focus);
 }
 
-/* Color Picker - Neon Container */
+/* Color Picker */
 .setting-color-picker {
   width: 60px;
   height: 36px;
-  border: 2px solid var(--border);
-  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3),
-              inset 0 0 10px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s var(--ease-out);
 }
 
 .setting-color-picker:hover {
-  border-color: var(--primary-400);
-  box-shadow: 0 0 10px rgba(0, 217, 255, 0.3),
-              inset 0 0 10px rgba(0, 0, 0, 0.5);
+  border-color: var(--border-strong);
 }
 
 .setting-color-picker:focus {
   outline: none;
   border-color: var(--primary-500);
-  box-shadow: 0 0 15px rgba(0, 217, 255, 0.4);
+  box-shadow: var(--shadow-focus);
 }
 
 /* Checkbox Items */
@@ -647,12 +528,12 @@ function applyTheme() {
   flex-direction: row;
   align-items: center;
   padding: var(--spacing-2);
-  border-radius: var(--radius-xs);
-  transition: all 0.2s;
+  border-radius: var(--radius-md);
+  transition: background 0.2s var(--ease-out);
 }
 
 .checkbox-item:hover {
-  background: rgba(0, 217, 255, 0.03);
+  background: var(--surface-hover);
 }
 
 .checkbox-label {
@@ -661,36 +542,31 @@ function applyTheme() {
   gap: var(--spacing-2);
   cursor: pointer;
   font-size: var(--text-sm);
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   color: var(--text-primary);
 }
 
-/* Custom Checkbox - Cyber Style */
+/* Custom Checkbox */
 .setting-checkbox {
   appearance: none;
   width: 18px;
   height: 18px;
-  border: 2px solid var(--border);
-  border-radius: var(--radius-xs);
-  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s var(--ease-out);
   position: relative;
   flex-shrink: 0;
 }
 
 .setting-checkbox:hover {
-  border-color: var(--primary-400);
-  box-shadow: 0 0 8px rgba(0, 217, 255, 0.2),
-              inset 0 0 5px rgba(0, 0, 0, 0.5);
+  border-color: var(--border-strong);
 }
 
 .setting-checkbox:checked {
   background: var(--primary-500);
   border-color: var(--primary-500);
-  box-shadow: 0 0 10px rgba(0, 217, 255, 0.5),
-              inset 0 0 10px rgba(0, 217, 255, 0.3);
 }
 
 .setting-checkbox:checked::after {
@@ -699,17 +575,15 @@ function applyTheme() {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: var(--background);
+  color: white;
   font-size: 12px;
   font-weight: var(--font-bold);
-  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 .setting-checkbox:focus {
   outline: none;
   border-color: var(--primary-500);
-  box-shadow: 0 0 12px rgba(0, 217, 255, 0.4),
-              inset 0 0 5px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-focus);
 }
 
 /* Services List */
@@ -724,38 +598,15 @@ function applyTheme() {
   align-items: center;
   gap: var(--spacing-3);
   padding: var(--spacing-3);
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid transparent;
-  border-radius: var(--radius-xs);
-  transition: all 0.2s;
-  position: relative;
-}
-
-/* Scan line hover effect */
-.service-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(0, 217, 255, 0.1),
-    transparent
-  );
-  transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: var(--radius-xs);
-}
-
-.service-item:hover::before {
-  left: 100%;
+  background: var(--surface-variant);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: all 0.2s var(--ease-out);
 }
 
 .service-item:hover {
-  border-color: rgba(0, 217, 255, 0.3);
-  background: rgba(0, 217, 255, 0.05);
+  border-color: var(--border-strong);
+  background: var(--surface-hover);
 }
 
 .service-color {
@@ -772,12 +623,8 @@ function applyTheme() {
     padding: var(--spacing-4) var(--spacing-3);
   }
 
-  .settings-header {
-    padding: var(--spacing-3);
-  }
-
   .settings-header h1 {
-    font-size: var(--text-xl);
+    font-size: var(--text-2xl);
   }
 
   .settings-section {
@@ -789,27 +636,15 @@ function applyTheme() {
   }
 }
 
-/* Light Mode Adjustments */
-:root[data-theme='light'] .settings-header {
-  background: rgba(255, 255, 255, 0.5);
-  box-shadow: 0 0 20px rgba(0, 217, 255, 0.15),
-              inset 0 0 20px rgba(0, 0, 0, 0.05);
+/* Dark mode adjustments */
+:root[data-theme='dark'] .settings-section,
+:root[data-theme='dark'] .service-item {
+  background: var(--surface);
+  border-color: var(--border);
 }
 
-:root[data-theme='light'] .settings-header h1 {
-  text-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
-}
-
-:root[data-theme='light'] .settings-section {
-  background: rgba(255, 255, 255, 0.5);
-}
-
-:root[data-theme='light'] .settings::before {
-  opacity: 0.3;
-}
-
-:root[data-theme='light'] .setting-select,
-:root[data-theme='light'] .setting-checkbox {
-  background: rgba(255, 255, 255, 0.5);
+:root[data-theme='dark'] .setting-select,
+:root[data-theme='dark'] .setting-checkbox {
+  background: var(--surface-variant);
 }
 </style>

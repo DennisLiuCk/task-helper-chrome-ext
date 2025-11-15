@@ -14,7 +14,7 @@
           @click="handleStar"
           title="收藏"
         >
-          ★
+          <Icon name="star" size="sm" />
         </button>
         <button
           v-if="!compact"
@@ -23,11 +23,13 @@
           @click="handlePin"
           title="置頂"
         >
-          📌
+          <Icon name="pin" size="sm" />
         </button>
         <Dropdown placement="bottom-end">
           <template #trigger>
-            <button class="task-action">⋯</button>
+            <button class="task-action">
+              <Icon name="moreVertical" size="sm" />
+            </button>
           </template>
           <DropdownItem @click="handleEdit">編輯</DropdownItem>
           <DropdownItem @click="handleCopyId">複製 ID</DropdownItem>
@@ -86,10 +88,12 @@
     <div v-if="showFooter && !compact" class="task-card__footer">
       <div class="task-footer-left">
         <span v-if="task.estimatedHours" class="task-time" title="預估時間">
-          ⏱️ {{ task.estimatedHours }}h
+          <Icon name="clock" size="xs" />
+          {{ task.estimatedHours }}h
         </span>
         <span v-if="task.actualHours" class="task-time" title="實際時間">
-          ✓ {{ task.actualHours }}h
+          <Icon name="check" size="xs" />
+          {{ task.actualHours }}h
         </span>
       </div>
       <div class="task-footer-right">
@@ -117,6 +121,7 @@
 import { computed } from 'vue';
 import type { Task, TaskStatus } from '@/types/task';
 import Badge from '@/components/common/Badge.vue';
+import Icon from '@/components/common/Icon.vue';
 import Dropdown from '@/components/common/Dropdown.vue';
 import DropdownItem from '@/components/common/DropdownItem.vue';
 import { useSettingsStore } from '@/stores/settings';
@@ -252,111 +257,54 @@ function openLink(url: string) {
 
 <style scoped>
 /* ═══════════════════════════════════════════════════════════
-   CYBER TASK CARD - Mission Control Task Display
+   MODERN TASK CARD - Clean Professional Task Display
    ═══════════════════════════════════════════════════════════ */
 
 .task-card {
   background: var(--surface);
-  border: 2px solid var(--border);
-  border-radius: var(--radius-md);     /* Sharper corners */
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
   padding: var(--spacing-4);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3),
-              0 2px 8px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s var(--ease-out);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
 }
 
-/* Scan line effect on hover */
-.task-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(0, 217, 255, 0.1),
-    transparent
-  );
-  transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.task-card:hover::before {
-  left: 100%;
-}
-
-/* Neon border glow on hover */
 .task-card:hover {
-  border-color: var(--primary-500);
-  box-shadow: 0 0 15px rgba(0, 217, 255, 0.4),
-              0 0 30px rgba(0, 217, 255, 0.2),
-              inset 0 0 20px rgba(0, 217, 255, 0.05),
-              0 4px 12px rgba(0, 0, 0, 0.5);
-  transform: translateY(-2px);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
 }
 
-/* Pinned state - Amber Warning Glow */
+/* Pinned state */
 .task-card--pinned {
   border-color: var(--warning);
-  background: var(--surface);
-  box-shadow: 0 0 20px var(--warning-glow),
-              inset 0 0 20px rgba(255, 184, 0, 0.08),
-              0 4px 12px rgba(0, 0, 0, 0.5);
-  animation: amberPulseCard 3s ease-in-out infinite;
+  background: var(--warning-bg);
 }
 
-.task-card--pinned::after {
+.task-card--pinned::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--warning),
-    transparent
-  );
-  box-shadow: 0 0 10px var(--warning);
+  background: var(--warning);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
 
-@keyframes amberPulseCard {
-  0%, 100% {
-    box-shadow: 0 0 20px var(--warning-glow),
-                inset 0 0 20px rgba(255, 184, 0, 0.08),
-                0 4px 12px rgba(0, 0, 0, 0.5);
-  }
-  50% {
-    box-shadow: 0 0 30px var(--warning-glow),
-                inset 0 0 30px rgba(255, 184, 0, 0.12),
-                0 6px 16px rgba(0, 0, 0, 0.6);
-  }
-}
-
-/* Starred state - Cyan Accent Border */
+/* Starred state */
 .task-card--starred {
-  border-left: 4px solid var(--primary-500);
-  box-shadow: -4px 0 15px rgba(0, 217, 255, 0.4),
-              inset 0 0 10px rgba(0, 0, 0, 0.3),
-              0 2px 8px rgba(0, 0, 0, 0.4);
+  border-left: 3px solid var(--primary-500);
 }
 
-/* Header - Terminal Command Bar */
+/* Header */
 .task-card__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--spacing-3);
   padding-bottom: var(--spacing-2);
-  border-bottom: 1px solid rgba(0, 217, 255, 0.15);
-  position: relative;
-  z-index: 2;
+  border-bottom: 1px solid var(--border);
 }
 
 .task-card__id {
@@ -367,16 +315,9 @@ function openLink(url: string) {
 
 .task-id {
   font-family: var(--font-mono);
-  font-weight: var(--font-bold);
+  font-weight: var(--font-semibold);
   font-size: var(--text-sm);
-  color: var(--primary-500);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
-  padding: var(--spacing-1) var(--spacing-2);
-  background: rgba(0, 217, 255, 0.05);
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(0, 217, 255, 0.2);
+  color: var(--text-secondary);
 }
 
 .task-card__actions {
@@ -389,52 +330,45 @@ function openLink(url: string) {
   height: 28px;
   border: 1px solid transparent;
   background: transparent;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-secondary);
-  font-size: 14px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s var(--ease-out);
 }
 
 .task-action:hover {
-  background: rgba(0, 217, 255, 0.08);
-  border-color: rgba(0, 217, 255, 0.3);
-  color: var(--primary-400);
-  box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
-  transform: scale(1.1);
+  background: var(--surface-hover);
+  border-color: var(--border);
+  color: var(--text-primary);
 }
 
 .task-action--active {
-  color: var(--warning);
-  background: rgba(255, 184, 0, 0.1);
-  border-color: var(--warning);
-  box-shadow: 0 0 10px var(--warning-glow);
+  color: var(--primary-600);
+  background: var(--primary-alpha-10);
+  border-color: var(--primary-200);
 }
 
-/* Title - Mission Objective */
+/* Title */
 .task-card__title {
   font-size: var(--text-base);
   font-weight: var(--font-semibold);
   color: var(--text-primary);
   margin-bottom: var(--spacing-3);
   line-height: 1.5;
-  position: relative;
-  z-index: 2;
 }
 
-/* Metadata - Data Readout */
+/* Metadata */
 .task-card__metadata {
   display: flex;
   flex-wrap: wrap;
   gap: var(--spacing-3);
   margin-bottom: var(--spacing-3);
   padding: var(--spacing-2);
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(0, 217, 255, 0.1);
+  background: var(--surface-variant);
+  border-radius: var(--radius-md);
 }
 
 .task-meta-item {
@@ -447,19 +381,15 @@ function openLink(url: string) {
 .task-meta-label {
   color: var(--text-secondary);
   font-size: var(--text-xs);
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-weight: var(--font-medium);
 }
 
 .task-meta-value {
   color: var(--text-primary);
   font-weight: var(--font-semibold);
-  font-family: var(--font-mono);
-  text-shadow: 0 0 5px rgba(0, 217, 255, 0.3);
 }
 
-/* Tags - Data Chips */
+/* Tags */
 .task-card__tags {
   display: flex;
   flex-wrap: wrap;
@@ -467,66 +397,27 @@ function openLink(url: string) {
   margin-bottom: var(--spacing-3);
 }
 
-/* Notes - Terminal Log */
+/* Notes */
 .task-card__notes {
   font-size: var(--text-sm);
   color: var(--text-secondary);
   margin-bottom: var(--spacing-3);
   padding: var(--spacing-3);
-  background: rgba(0, 0, 0, 0.4);
-  border-radius: var(--radius-sm);
+  background: var(--surface-variant);
+  border-radius: var(--radius-md);
   border-left: 3px solid var(--primary-500);
-  border-right: 1px solid rgba(0, 217, 255, 0.2);
-  border-top: 1px solid rgba(0, 217, 255, 0.1);
-  border-bottom: 1px solid rgba(0, 217, 255, 0.1);
-  box-shadow: -3px 0 10px rgba(0, 217, 255, 0.3),
-              inset 0 0 10px rgba(0, 0, 0, 0.5);
-  font-family: var(--font-mono);
   line-height: 1.6;
-  position: relative;
 }
 
-.task-card__notes::before {
-  content: '// NOTE';
-  position: absolute;
-  top: -10px;
-  left: var(--spacing-2);
-  font-size: 9px;
-  color: var(--primary-500);
-  background: var(--surface);
-  padding: 2px var(--spacing-2);
-  border-radius: var(--radius-sm);
-  letter-spacing: 0.1em;
-  font-weight: var(--font-bold);
-}
-
-/* Footer - Status Bar */
+/* Footer */
 .task-card__footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-top: var(--spacing-3);
-  border-top: 1px solid rgba(0, 217, 255, 0.2);
+  border-top: 1px solid var(--border);
   font-size: var(--text-xs);
   color: var(--text-secondary);
-  font-family: var(--font-mono);
-  position: relative;
-}
-
-.task-card__footer::before {
-  content: '';
-  position: absolute;
-  top: -1px;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(0, 217, 255, 0.5),
-    transparent
-  );
-  box-shadow: 0 0 5px rgba(0, 217, 255, 0.5);
 }
 
 .task-footer-left,
@@ -539,134 +430,91 @@ function openLink(url: string) {
   display: flex;
   align-items: center;
   gap: var(--spacing-1);
-  padding: 2px var(--spacing-2);
-  background: rgba(0, 217, 255, 0.05);
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(0, 217, 255, 0.15);
+  padding: var(--spacing-1) var(--spacing-2);
+  background: var(--surface-variant);
+  border-radius: var(--radius-md);
 }
 
 .task-date {
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.05em;
 }
 
-/* Quick Status - Command Buttons */
+/* Quick Status */
 .task-card__quick-status {
   display: flex;
   gap: var(--spacing-1);
   margin-top: var(--spacing-3);
   padding-top: var(--spacing-3);
-  border-top: 1px solid rgba(0, 217, 255, 0.15);
-  position: relative;
-}
-
-.task-card__quick-status::before {
-  content: 'QUICK STATUS';
-  position: absolute;
-  top: -8px;
-  left: var(--spacing-2);
-  font-size: 8px;
-  color: var(--text-secondary);
-  background: var(--surface);
-  padding: 0 var(--spacing-1);
-  letter-spacing: 0.1em;
-  font-family: var(--font-mono);
-  font-weight: var(--font-bold);
+  border-top: 1px solid var(--border);
 }
 
 .quick-status-btn {
   flex: 1;
   padding: var(--spacing-1) var(--spacing-2);
-  border: 1px solid rgba(0, 217, 255, 0.2);
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: var(--radius-sm);
-  font-size: 9px;
-  font-weight: var(--font-bold);
-  font-family: var(--font-mono);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  font-size: 10px;
+  font-weight: var(--font-semibold);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.025em;
   color: var(--text-secondary);
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.quick-status-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.1),
-    transparent
-  );
-  transform: translateX(-100%);
-  transition: transform 0.3s;
+  transition: all 0.2s var(--ease-out);
 }
 
 .quick-status-btn:hover {
-  border-color: var(--primary-500);
-  color: var(--primary-400);
-  background: rgba(0, 217, 255, 0.1);
-  box-shadow: 0 0 10px rgba(0, 217, 255, 0.3),
-              inset 0 0 10px rgba(0, 217, 255, 0.1);
-  transform: translateY(-1px);
-}
-
-.quick-status-btn:hover::before {
-  transform: translateX(100%);
+  border-color: var(--border-strong);
+  background: var(--surface-hover);
+  color: var(--text-primary);
 }
 
 .quick-status-btn--active {
   border-color: var(--primary-500);
-  background: rgba(0, 217, 255, 0.2);
-  color: var(--primary-400);
-  box-shadow: 0 0 15px rgba(0, 217, 255, 0.5),
-              inset 0 0 15px rgba(0, 217, 255, 0.2);
-  text-shadow: 0 0 10px rgba(0, 217, 255, 0.8);
+  background: var(--primary-alpha-10);
+  color: var(--primary-600);
 }
 
-/* Status-specific colors on active */
-.quick-status-btn--active:nth-child(1) { /* NA - Gray */
+/* Status-specific colors */
+.quick-status-btn--active:nth-child(1) {
   border-color: var(--status-na);
-  color: var(--status-na-hover);
+  color: var(--status-na);
   background: var(--status-na-bg);
 }
 
-.quick-status-btn--active:nth-child(2) { /* DEV - Amber */
+.quick-status-btn--active:nth-child(2) {
   border-color: var(--status-dev);
   color: var(--status-dev);
   background: var(--status-dev-bg);
-  box-shadow: 0 0 15px var(--status-dev-glow);
-  text-shadow: 0 0 8px rgba(255, 184, 0, 0.6);
 }
 
-.quick-status-btn--active:nth-child(3) { /* QA - Green */
+.quick-status-btn--active:nth-child(3) {
   border-color: var(--status-qa);
   color: var(--status-qa);
   background: var(--status-qa-bg);
-  box-shadow: 0 0 15px var(--status-qa-glow);
-  text-shadow: 0 0 10px rgba(57, 255, 20, 0.8);
 }
 
-.quick-status-btn--active:nth-child(4) { /* UAT - Purple */
+.quick-status-btn--active:nth-child(4) {
   border-color: var(--status-uat);
   color: var(--status-uat);
   background: var(--status-uat-bg);
-  box-shadow: 0 0 15px var(--status-uat-glow);
-  text-shadow: 0 0 8px rgba(181, 55, 242, 0.6);
 }
 
-.quick-status-btn--active:nth-child(5) { /* DONE - Cyan */
+.quick-status-btn--active:nth-child(5) {
   border-color: var(--status-done);
   color: var(--status-done);
   background: var(--status-done-bg);
-  box-shadow: 0 0 20px var(--status-done-glow);
-  text-shadow: 0 0 10px rgba(0, 217, 255, 0.8);
+}
+
+/* Dark mode adjustments */
+:root[data-theme='dark'] .task-card {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:root[data-theme='dark'] .task-card__metadata,
+:root[data-theme='dark'] .task-card__notes,
+:root[data-theme='dark'] .task-time {
+  background: var(--surface-variant);
 }
 </style>

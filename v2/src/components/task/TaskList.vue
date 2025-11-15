@@ -40,14 +40,14 @@
             @click="viewMode = 'card'"
             title="卡片檢視"
           >
-            ▦
+            <Icon name="grid" size="sm" />
           </button>
           <button
             :class="['view-toggle-btn', { 'view-toggle-btn--active': viewMode === 'compact' }]"
             @click="viewMode = 'compact'"
             title="緊湊檢視"
           >
-            ☰
+            <Icon name="list" size="sm" />
           </button>
         </div>
       </div>
@@ -113,7 +113,9 @@
     <!-- Empty State -->
     <div v-else class="task-list__empty">
       <div class="empty-state">
-        <div class="empty-icon">📋</div>
+        <div class="empty-icon">
+          <Icon name="tasks" size="xl" />
+        </div>
         <h3>{{ emptyTitle }}</h3>
         <p>{{ emptyMessage }}</p>
         <Button v-if="showAddButton" variant="primary" @click="$emit('create')">
@@ -129,6 +131,7 @@ import { ref, computed } from 'vue';
 import type { Task, TaskStatus } from '@/types/task';
 import TaskCard from './TaskCard.vue';
 import Button from '@/components/common/Button.vue';
+import Icon from '@/components/common/Icon.vue';
 import Dropdown from '@/components/common/Dropdown.vue';
 import DropdownItem from '@/components/common/DropdownItem.vue';
 import { useTaskStore } from '@/stores/tasks';
@@ -284,7 +287,7 @@ function handleStatusChange(task: Task, status: TaskStatus) {
 
 <style scoped>
 /* ═══════════════════════════════════════════════════════════
-   CYBER TASK LIST - Mission Control Task Display
+   MODERN TASK LIST - Clean Professional Task Display
    ═══════════════════════════════════════════════════════════ */
 
 .task-list {
@@ -293,7 +296,7 @@ function handleStatusChange(task: Task, status: TaskStatus) {
   gap: var(--spacing-4);
 }
 
-/* Controls - Command Bar */
+/* Controls */
 .task-list__controls {
   display: flex;
   justify-content: space-between;
@@ -301,10 +304,9 @@ function handleStatusChange(task: Task, status: TaskStatus) {
   gap: var(--spacing-3);
   flex-wrap: wrap;
   padding: var(--spacing-3);
-  background: rgba(0, 0, 0, 0.2);
-  border: 2px solid rgba(0, 217, 255, 0.2);
-  border-radius: var(--radius-sm);
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+  background: var(--surface-variant);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
 }
 
 .task-list__filters {
@@ -321,26 +323,22 @@ function handleStatusChange(task: Task, status: TaskStatus) {
 
 .selected-count {
   font-size: var(--text-xs);
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--primary-400);
-  font-weight: var(--font-bold);
+  font-family: var(--font-sans);
+  font-weight: var(--font-medium);
+  color: var(--primary-600);
   padding: var(--spacing-1) var(--spacing-2);
-  background: rgba(0, 217, 255, 0.1);
-  border: 1px solid rgba(0, 217, 255, 0.3);
-  border-radius: var(--radius-xs);
-  box-shadow: 0 0 8px rgba(0, 217, 255, 0.2);
+  background: var(--primary-alpha-10);
+  border: 1px solid var(--primary-200);
+  border-radius: var(--radius-full);
 }
 
-/* View Toggle - Terminal Mode Selector */
+/* View Toggle */
 .view-toggle {
   display: flex;
-  background: rgba(0, 0, 0, 0.3);
-  border: 2px solid var(--border);
-  border-radius: var(--radius-xs);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
   overflow: hidden;
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 .view-toggle-btn {
@@ -350,64 +348,32 @@ function handleStatusChange(task: Task, status: TaskStatus) {
   background: transparent;
   color: var(--text-secondary);
   cursor: pointer;
-  font-size: 14px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
+  transition: all 0.2s var(--ease-out);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .view-toggle-btn:last-child {
   border-right: none;
 }
 
-.view-toggle-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(0, 217, 255, 0.1),
-    transparent
-  );
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.view-toggle-btn:hover::before {
-  opacity: 1;
-}
-
 .view-toggle-btn:hover {
-  background: rgba(0, 217, 255, 0.05);
-  color: var(--primary-400);
+  background: var(--surface-hover);
+  color: var(--text-primary);
 }
 
 .view-toggle-btn--active {
   background: var(--primary-500);
-  color: var(--background);
-  font-weight: var(--font-bold);
-  box-shadow: 0 0 10px rgba(0, 217, 255, 0.5),
-              inset 0 0 10px rgba(0, 217, 255, 0.3);
-  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  color: white;
 }
 
-.view-toggle-btn--active::before {
-  display: none;
-}
-
-/* Info - System Readout */
+/* Info */
 .task-list__info {
-  font-size: 10px;
-  font-family: var(--font-mono);
-  color: var(--primary-400);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.task-list__info::before {
-  content: '> ';
-  color: var(--primary-500);
-  font-weight: var(--font-bold);
+  font-size: 11px;
+  font-family: var(--font-sans);
+  color: var(--text-secondary);
+  font-weight: var(--font-medium);
 }
 
 /* Items */
@@ -429,10 +395,8 @@ function handleStatusChange(task: Task, status: TaskStatus) {
 
 .task-list-item--selected :deep(.task-card) {
   border-color: var(--primary-500);
-  background: rgba(0, 217, 255, 0.08);
-  box-shadow: 0 0 20px rgba(0, 217, 255, 0.4),
-              0 0 40px rgba(0, 217, 255, 0.2),
-              inset 0 0 20px rgba(0, 217, 255, 0.08);
+  background: var(--primary-alpha-10);
+  box-shadow: var(--shadow-md);
 }
 
 .task-checkbox {
@@ -443,24 +407,21 @@ function handleStatusChange(task: Task, status: TaskStatus) {
   appearance: none;
   width: 18px;
   height: 18px;
-  border: 2px solid var(--border);
-  border-radius: var(--radius-xs);
-  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
   cursor: pointer;
   position: relative;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s var(--ease-out);
 }
 
 .task-checkbox input[type="checkbox"]:hover {
-  border-color: var(--primary-500);
-  box-shadow: 0 0 8px rgba(0, 217, 255, 0.3);
+  border-color: var(--border-strong);
 }
 
 .task-checkbox input[type="checkbox"]:checked {
   background: var(--primary-500);
   border-color: var(--primary-500);
-  box-shadow: 0 0 10px rgba(0, 217, 255, 0.5),
-              inset 0 0 10px rgba(0, 217, 255, 0.3);
 }
 
 .task-checkbox input[type="checkbox"]:checked::after {
@@ -469,18 +430,17 @@ function handleStatusChange(task: Task, status: TaskStatus) {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: var(--background);
+  color: white;
   font-size: 12px;
   font-weight: var(--font-bold);
-  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
-/* Empty State - Terminal No Data */
+/* Empty State */
 .task-list__empty {
   padding: var(--spacing-10) var(--spacing-4);
-  border: 2px dashed rgba(0, 217, 255, 0.2);
-  border-radius: var(--radius-sm);
-  background: rgba(0, 0, 0, 0.2);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-variant);
 }
 
 .empty-state {
@@ -492,49 +452,43 @@ function handleStatusChange(task: Task, status: TaskStatus) {
 }
 
 .empty-icon {
-  font-size: 64px;
-  opacity: 0.2;
-  filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.3));
+  color: var(--text-disabled);
+  opacity: 0.5;
 }
 
 .empty-state h3 {
   font-size: var(--text-lg);
   font-family: var(--font-display);
-  font-weight: var(--font-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--primary-400);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
   margin: 0;
-  text-shadow: 0 0 10px rgba(0, 217, 255, 0.4);
 }
 
 .empty-state p {
   font-size: var(--text-sm);
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   color: var(--text-secondary);
   margin: 0;
 }
 
-/* Transitions - Data Stream */
+/* Transitions */
 .task-list-move,
 .task-list-enter-active {
-  transition: all 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+  transition: all 0.3s var(--ease-out);
 }
 
 .task-list-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 1, 1);
+  transition: all 0.2s var(--ease-in);
 }
 
 .task-list-enter-from {
   opacity: 0;
-  transform: translateY(-20px) scaleY(0.8);
-  filter: brightness(2);
+  transform: translateY(-10px);
 }
 
 .task-list-leave-to {
   opacity: 0;
-  transform: translateX(-30px) scaleX(0.9);
-  filter: brightness(0.5);
+  transform: translateX(-10px);
 }
 
 .task-list-leave-active {
@@ -542,25 +496,21 @@ function handleStatusChange(task: Task, status: TaskStatus) {
   width: 100%;
 }
 
-/* Light Mode Adjustments */
-:root[data-theme='light'] .task-list__controls {
-  background: rgba(255, 255, 255, 0.5);
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+/* Dark mode adjustments */
+:root[data-theme='dark'] .task-list__controls {
+  background: var(--surface);
+  border-color: var(--border);
 }
 
-:root[data-theme='light'] .view-toggle {
-  background: rgba(255, 255, 255, 0.5);
+:root[data-theme='dark'] .view-toggle {
+  background: var(--surface-variant);
 }
 
-:root[data-theme='light'] .task-checkbox input[type="checkbox"] {
-  background: rgba(255, 255, 255, 0.8);
+:root[data-theme='dark'] .task-checkbox input[type="checkbox"] {
+  background: var(--surface-variant);
 }
 
-:root[data-theme='light'] .task-list__empty {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-:root[data-theme='light'] .empty-state h3 {
-  text-shadow: none;
+:root[data-theme='dark'] .task-list__empty {
+  background: var(--surface);
 }
 </style>

@@ -79,7 +79,7 @@ function handleClick(event: MouseEvent) {
 
 <style scoped>
 /* ═══════════════════════════════════════════════════════════
-   CYBER COMMAND BUTTON - Neon-edged Terminal Controls
+   MODERN BUTTON - Clean Professional Controls
    ═══════════════════════════════════════════════════════════ */
 
 .btn {
@@ -87,40 +87,16 @@ function handleClick(event: MouseEvent) {
   align-items: center;
   justify-content: center;
   gap: var(--spacing-2);
-  border-radius: var(--radius-sm);  /* Sharper corners */
-  font-family: var(--font-mono);    /* Monospace for technical feel */
-  font-weight: var(--font-semibold);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-weight: var(--font-medium);
   font-size: var(--text-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;           /* Wider letter spacing */
   cursor: pointer;
   white-space: nowrap;
   user-select: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 2px solid transparent;    /* Thicker border for neon effect */
+  transition: all 0.2s var(--ease-out);
+  border: 1px solid transparent;
   position: relative;
-  overflow: hidden;
-}
-
-/* Cyber scan line effect on hover */
-.btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
-  transition: left 0.5s;
-}
-
-.btn:hover::before {
-  left: 100%;
 }
 
 .btn:focus-visible {
@@ -154,76 +130,61 @@ function handleClick(event: MouseEvent) {
   font-size: var(--text-lg);
 }
 
-/* Primary Variant - Neon Cyan Glow */
+/* Primary Variant */
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
-  color: var(--background);
+  background: var(--primary-500);
+  color: white;
   border-color: var(--primary-500);
-  box-shadow: 0 0 10px rgba(0, 217, 255, 0.3),
-              0 4px 8px rgba(0, 0, 0, 0.4);
-  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--primary-500), var(--primary-400));
-  border-color: var(--primary-400);
-  box-shadow: 0 0 20px rgba(0, 217, 255, 0.6),
-              0 0 30px rgba(0, 217, 255, 0.4),
-              0 6px 12px rgba(0, 0, 0, 0.5);
-  transform: translateY(-2px);
+  background: var(--primary-600);
+  border-color: var(--primary-600);
+  box-shadow: var(--shadow-md);
 }
 
 .btn-primary:active:not(:disabled) {
-  background: linear-gradient(135deg, var(--primary-700), var(--primary-600));
-  box-shadow: 0 0 10px rgba(0, 217, 255, 0.4),
-              0 2px 4px rgba(0, 0, 0, 0.6);
-  transform: translateY(0);
+  background: var(--primary-700);
+  border-color: var(--primary-700);
+  box-shadow: var(--shadow-sm);
 }
 
-/* Secondary Variant - Outlined Neon */
+/* Secondary Variant */
 .btn-secondary {
   background: var(--surface);
-  color: var(--primary-500);
-  border-color: var(--primary-500);
-  box-shadow: inset 0 0 10px rgba(0, 217, 255, 0.1);
+  color: var(--text-primary);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: var(--primary-alpha-10);
-  border-color: var(--primary-400);
-  color: var(--primary-400);
-  box-shadow: 0 0 15px rgba(0, 217, 255, 0.4),
-              inset 0 0 20px rgba(0, 217, 255, 0.2);
-  text-shadow: 0 0 10px rgba(0, 217, 255, 0.6);
+  background: var(--surface-hover);
+  border-color: var(--border-strong);
 }
 
 .btn-secondary:active:not(:disabled) {
-  background: var(--primary-alpha-20);
-  box-shadow: inset 0 0 10px rgba(0, 217, 255, 0.3);
+  background: var(--surface-variant);
 }
 
-/* Tertiary Variant - Muted Surface */
+/* Tertiary Variant */
 .btn-tertiary {
   background: var(--surface-variant);
   color: var(--text-secondary);
   border-color: var(--border);
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
 .btn-tertiary:hover:not(:disabled) {
   background: var(--surface-hover);
   border-color: var(--border-strong);
   color: var(--text-primary);
-  box-shadow: 0 0 10px rgba(0, 217, 255, 0.2),
-              inset 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 .btn-tertiary:active:not(:disabled) {
   background: var(--surface);
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4);
 }
 
-/* Ghost Variant - Minimal Glow on Hover */
+/* Ghost Variant */
 .btn-ghost {
   background: transparent;
   color: var(--text-secondary);
@@ -231,41 +192,31 @@ function handleClick(event: MouseEvent) {
 }
 
 .btn-ghost:hover:not(:disabled) {
-  background: rgba(0, 217, 255, 0.05);
-  border-color: rgba(0, 217, 255, 0.2);
+  background: var(--surface-hover);
   color: var(--text-primary);
-  box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
 }
 
 .btn-ghost:active:not(:disabled) {
-  background: rgba(0, 217, 255, 0.1);
-  box-shadow: inset 0 0 10px rgba(0, 217, 255, 0.2);
+  background: var(--surface-variant);
 }
 
-/* Danger Variant - Critical Red Alert */
+/* Danger Variant */
 .btn-danger {
-  background: linear-gradient(135deg, #FF5282, var(--error));
+  background: var(--error);
   color: white;
   border-color: var(--error);
-  box-shadow: 0 0 10px rgba(255, 46, 99, 0.4),
-              0 4px 8px rgba(0, 0, 0, 0.4);
-  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-danger:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--error), #D91E50);
+  background: var(--error-hover);
   border-color: var(--error-hover);
-  box-shadow: 0 0 20px rgba(255, 46, 99, 0.6),
-              0 0 30px rgba(255, 46, 99, 0.4),
-              0 6px 12px rgba(0, 0, 0, 0.5);
-  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .btn-danger:active:not(:disabled) {
-  background: linear-gradient(135deg, #D91E50, #C01A45);
-  box-shadow: 0 0 10px rgba(255, 46, 99, 0.4),
-              0 2px 4px rgba(0, 0, 0, 0.6);
-  transform: translateY(0);
+  background: var(--error);
+  box-shadow: var(--shadow-sm);
 }
 
 /* States */
@@ -273,7 +224,6 @@ function handleClick(event: MouseEvent) {
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  transform: none !important;
 }
 
 .btn-loading {
@@ -360,16 +310,13 @@ function handleClick(event: MouseEvent) {
   height: 20px;
 }
 
-/* Light Mode Adjustments (if needed) */
-:root[data-theme='light'] .btn-primary {
-  color: white;  /* Ensure text is readable on light backgrounds */
+/* Dark mode adjustments */
+:root[data-theme='dark'] .btn-secondary {
+  background: var(--surface);
+  border-color: var(--border);
 }
 
-:root[data-theme='light'] .btn-secondary {
-  background: white;
-}
-
-:root[data-theme='light'] .btn-ghost:hover:not(:disabled) {
-  background: rgba(0, 217, 255, 0.08);
+:root[data-theme='dark'] .btn-tertiary {
+  background: var(--surface-variant);
 }
 </style>
